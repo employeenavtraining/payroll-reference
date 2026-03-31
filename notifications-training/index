@@ -1,0 +1,901 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EN Payroll Sync — Analyst Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy:#0d1b2a; --navy-mid:#1a2e42; --navy-light:#243d54;
+  --teal:#00b4a6; --teal-dim:#008f84;
+  --amber:#f5a623; --amber-dim:#9a6e00;
+  --rose:#e8445a; --green:#21a179; --violet:#7c5cbf;
+  --cream:#f7f4ef; --cream-dark:#ede9e2;
+  --text:#1a1a2e; --muted:#5a6475; --white:#fff;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);font-size:16px;line-height:1.7;}
+
+.hero{background:var(--navy);padding:72px 40px 64px;text-align:center;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;top:-100px;right:-100px;width:450px;height:450px;border-radius:50%;background:radial-gradient(circle,rgba(0,180,166,.14) 0%,transparent 70%);pointer-events:none;}
+.hero::after{content:'';position:absolute;bottom:-80px;left:-80px;width:320px;height:320px;border-radius:50%;background:radial-gradient(circle,rgba(245,166,35,.1) 0%,transparent 70%);pointer-events:none;}
+.eyebrow{display:inline-block;font-family:'DM Mono',monospace;font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:var(--teal);background:rgba(0,180,166,.12);border:1px solid rgba(0,180,166,.3);padding:5px 14px;border-radius:20px;margin-bottom:22px;}
+.hero h1{font-family:'Playfair Display',serif;font-size:clamp(28px,4.5vw,50px);color:var(--white);line-height:1.15;max-width:780px;margin:0 auto 18px;}
+.hero h1 .t{color:var(--teal);} .hero h1 .a{color:var(--amber);}
+.hero-sub{color:rgba(255,255,255,.52);font-size:15px;font-weight:300;max-width:620px;margin:0 auto 36px;}
+.hero-chips{display:flex;justify-content:center;gap:20px;flex-wrap:wrap;}
+.chip{display:flex;align-items:center;gap:7px;font-size:12px;color:rgba(255,255,255,.42);}
+.chip-dot{width:6px;height:6px;border-radius:50%;}
+
+.toc-bar{background:var(--navy-mid);padding:0 40px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;gap:0;flex-wrap:wrap;overflow-x:auto;}
+.toc-item{padding:13px 18px;font-size:12.5px;color:rgba(255,255,255,.45);cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;transition:color .2s,border-color .2s;font-weight:500;}
+.toc-item:hover{color:rgba(255,255,255,.75);}
+.toc-item.active{color:var(--teal);border-bottom-color:var(--teal);}
+
+.pbar{background:var(--navy-light);padding:8px 40px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:200;border-bottom:1px solid rgba(255,255,255,.05);}
+.pbar-label{font-family:'DM Mono',monospace;font-size:9.5px;color:rgba(255,255,255,.35);letter-spacing:1.5px;text-transform:uppercase;white-space:nowrap;}
+.pbar-track{flex:1;height:3px;background:rgba(255,255,255,.1);border-radius:4px;overflow:hidden;}
+.pbar-fill{height:100%;background:linear-gradient(90deg,var(--teal),var(--amber));border-radius:4px;width:0%;transition:width .5s ease;}
+.pbar-count{font-family:'DM Mono',monospace;font-size:9.5px;color:var(--teal);white-space:nowrap;}
+
+.wrap{max-width:900px;margin:0 auto;padding:0 28px;}
+
+.section{padding:64px 0 0;opacity:0;transform:translateY(20px);transition:opacity .55s ease,transform .55s ease;}
+.section.visible{opacity:1;transform:none;}
+.sec-label{display:flex;align-items:center;gap:11px;margin-bottom:6px;}
+.sec-badge{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:11px;color:var(--white);flex-shrink:0;}
+.bg-teal{background:var(--teal);} .bg-amber{background:var(--amber);color:var(--navy)!important;}
+.bg-rose{background:var(--rose);} .bg-violet{background:var(--violet);} .bg-green{background:var(--green);}
+.sec-eyebrow{font-family:'DM Mono',monospace;font-size:10.5px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
+.section h2{font-family:'Playfair Display',serif;font-size:clamp(22px,3vw,30px);color:var(--navy);line-height:1.2;margin-bottom:12px;}
+.lead{color:var(--muted);font-size:15px;max-width:740px;margin-bottom:26px;}
+
+.dir-wrap{display:flex;gap:0;border-radius:14px;overflow:hidden;margin:6px 0 30px;box-shadow:0 4px 18px rgba(0,0,0,.09);}
+.dir-col{flex:1;padding:22px 20px;}
+.dir-col.in-col{background:rgba(0,180,166,.07);border:1.5px solid rgba(0,180,166,.18);border-right:none;border-radius:14px 0 0 14px;}
+.dir-col.out-col{background:rgba(245,166,35,.07);border:1.5px solid rgba(245,166,35,.18);border-left:none;border-radius:0 14px 14px 0;}
+.dir-mid{background:var(--white);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 14px;gap:8px;border-top:1.5px solid var(--cream-dark);border-bottom:1.5px solid var(--cream-dark);}
+.dir-arr{font-size:17px;}
+.dir-tag{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;}
+.dir-col-tag{font-family:'DM Mono',monospace;font-size:9.5px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px;}
+.tc{color:var(--teal-dim);} .ac{color:var(--amber-dim);}
+.dir-col h3{font-weight:600;font-size:14.5px;color:var(--navy);margin-bottom:4px;}
+.dir-col p{font-size:13px;color:var(--muted);line-height:1.55;margin:0;}
+
+.flow{display:flex;flex-direction:column;margin:22px 0 30px;position:relative;}
+.flow::before{content:'';position:absolute;left:23px;top:50px;bottom:50px;width:2px;background:linear-gradient(180deg,var(--teal),rgba(0,180,166,.08));}
+.flow.out-flow::before{background:linear-gradient(180deg,var(--amber),rgba(245,166,35,.08));}
+.frow{display:flex;gap:18px;align-items:flex-start;}
+.ficol{display:flex;flex-direction:column;align-items:center;width:48px;flex-shrink:0;}
+.ficon{width:48px;height:48px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0;z-index:1;}
+.fi-t{background:rgba(0,180,166,.11);border:1.5px solid rgba(0,180,166,.26);}
+.fi-a{background:rgba(245,166,35,.1);border:1.5px solid rgba(245,166,35,.26);}
+.fi-r{background:rgba(232,68,90,.09);border:1.5px solid rgba(232,68,90,.22);}
+.fi-n{background:var(--navy);border:1.5px solid var(--navy-light);}
+.fi-v{background:rgba(124,92,191,.1);border:1.5px solid rgba(124,92,191,.24);}
+.fi-g{background:rgba(33,161,121,.1);border:1.5px solid rgba(33,161,121,.24);}
+.fline{width:2px;flex:1;min-height:18px;background:var(--cream-dark);margin:3px 0;}
+.fbody{flex:1;padding:8px 0 26px;}
+.fwho{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:2px;}
+.ftitle{font-weight:600;font-size:15px;color:var(--navy);margin-bottom:4px;}
+.fdesc{font-size:13.5px;color:var(--muted);line-height:1.6;}
+.fdesc code{font-family:'DM Mono',monospace;font-size:12px;background:var(--cream-dark);padding:2px 7px;border-radius:5px;color:var(--teal-dim);font-weight:500;}
+.fdesc strong{color:var(--text);font-weight:600;}
+.fdesc ul{padding-left:18px;margin-top:5px;}
+.fdesc ul li{margin-bottom:3px;}
+
+.ep{display:inline-flex;align-items:center;gap:5px;font-family:'DM Mono',monospace;font-size:11.5px;font-weight:500;padding:3px 10px;border-radius:6px;white-space:nowrap;vertical-align:middle;}
+.ep-get{background:rgba(33,161,121,.12);color:#167a5c;border:1px solid rgba(33,161,121,.25);}
+.ep-post{background:rgba(245,166,35,.12);color:#8a5e00;border:1px solid rgba(245,166,35,.28);}
+
+.analogy{background:var(--navy);border-radius:13px;padding:24px 28px;margin:18px 0 28px;display:flex;gap:16px;align-items:flex-start;}
+.analogy-icon{font-size:24px;flex-shrink:0;margin-top:3px;}
+.an-tag{font-family:'DM Mono',monospace;font-size:9.5px;letter-spacing:2px;text-transform:uppercase;color:var(--amber);margin-bottom:5px;}
+.analogy p{color:rgba(255,255,255,.72);font-size:14px;line-height:1.65;margin:0;}
+.analogy p+p{margin-top:7px;}
+.analogy strong{color:var(--teal);}
+.an-a{color:var(--amber)!important;}
+
+.callout{border-left:3px solid var(--teal);background:var(--white);border-radius:0 10px 10px 0;padding:15px 20px;margin:18px 0 26px;box-shadow:0 2px 8px rgba(0,0,0,.05);}
+.callout.am{border-color:var(--amber);}
+.callout.ro{border-color:var(--rose);}
+.callout.vi{border-color:var(--violet);}
+.callout.gr{border-color:var(--green);}
+.ctag{font-family:'DM Mono',monospace;font-size:9.5px;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;}
+.ctag.tc{color:var(--teal-dim);} .ctag.ac{color:var(--amber-dim);}
+.ctag.rc{color:var(--rose);} .ctag.vc{color:var(--violet);} .ctag.gc{color:var(--green);}
+.callout p{font-size:13.5px;color:var(--text);margin:0;line-height:1.6;}
+.callout p+p{margin-top:6px;}
+.callout code{font-family:'DM Mono',monospace;font-size:12px;background:var(--cream-dark);padding:2px 6px;border-radius:4px;color:var(--teal-dim);}
+.callout ul{padding-left:18px;margin-top:6px;}
+.callout ul li{font-size:13.5px;color:var(--text);line-height:1.6;margin-bottom:3px;}
+
+.tbl{background:var(--white);border-radius:13px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.06);margin:18px 0 26px;border:1px solid var(--cream-dark);}
+.tbl-hdr{background:var(--navy);padding:11px 18px;}
+.tbl-hdr span{font-family:'DM Mono',monospace;font-size:11px;color:var(--teal);letter-spacing:1.5px;}
+.tbl table{width:100%;border-collapse:collapse;font-size:13.5px;}
+.tbl th{background:var(--cream);padding:9px 16px;text-align:left;font-family:'DM Mono',monospace;font-size:9.5px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--cream-dark);}
+.tbl td{padding:11px 16px;border-bottom:1px solid var(--cream-dark);vertical-align:top;}
+.tbl tr:last-child td{border-bottom:none;}
+.tbl tr:hover td{background:var(--cream);}
+.pill{display:inline-block;font-family:'DM Mono',monospace;font-size:11px;padding:2px 8px;border-radius:20px;white-space:nowrap;}
+.pt{background:rgba(0,180,166,.1);color:var(--teal-dim);border:1px solid rgba(0,180,166,.22);}
+.pa{background:rgba(245,166,35,.1);color:var(--amber-dim);border:1px solid rgba(245,166,35,.28);}
+.pr{background:rgba(232,68,90,.08);color:var(--rose);border:1px solid rgba(232,68,90,.2);}
+.pg{background:rgba(33,161,121,.1);color:#167a5c;border:1px solid rgba(33,161,121,.22);}
+
+.ob-cards{display:flex;flex-direction:column;gap:16px;margin:20px 0 28px;}
+.ob-card{background:var(--white);border:1px solid var(--cream-dark);border-radius:13px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.05);}
+.ob-card-hdr{display:flex;align-items:center;gap:13px;padding:16px 20px;border-bottom:1px solid var(--cream-dark);}
+.ob-card-icon{font-size:20px;width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.ob-card-title{font-weight:600;font-size:14.5px;color:var(--navy);}
+.ob-card-sub{font-size:12px;color:var(--muted);margin-top:1px;}
+.ob-card-body{padding:16px 20px;}
+.ob-card-body p{font-size:13.5px;color:var(--muted);line-height:1.6;margin-bottom:10px;}
+.ob-card-body p:last-child{margin-bottom:0;}
+.ob-card-body strong{color:var(--text);}
+.ob-triggers{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
+.trigger-tag{font-size:12px;background:var(--cream);border:1px solid var(--cream-dark);border-radius:6px;padding:3px 9px;color:var(--muted);}
+
+.divider{height:1px;background:var(--cream-dark);margin:56px 0 0;}
+
+.kc{background:var(--navy);border-radius:18px;padding:34px 34px 30px;margin:28px 0 56px;position:relative;overflow:hidden;}
+.kc::before{content:'?';position:absolute;right:24px;top:8px;font-family:'Playfair Display',serif;font-size:120px;color:rgba(255,255,255,.03);line-height:1;pointer-events:none;}
+.kc-head{display:flex;align-items:center;gap:10px;margin-bottom:26px;}
+.kc-badge{background:var(--amber);color:var(--navy);font-family:'DM Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;padding:4px 10px;border-radius:20px;font-weight:600;}
+.kc-title{font-family:'Playfair Display',serif;font-size:17px;color:var(--white);}
+.qblock{margin-bottom:26px;}
+.qblock:last-of-type{margin-bottom:0;}
+.qtext{color:rgba(255,255,255,.88);font-size:14.5px;font-weight:500;margin-bottom:12px;line-height:1.5;}
+.opts{display:flex;flex-direction:column;gap:7px;}
+.opt{display:flex;align-items:flex-start;gap:11px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:9px;padding:11px 14px;cursor:pointer;transition:background .2s,border-color .2s;text-align:left;width:100%;font-family:'DM Sans',sans-serif;}
+.opt:hover{background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.2);}
+.opt.correct{background:rgba(33,161,121,.18);border-color:var(--green);pointer-events:none;}
+.opt.wrong{background:rgba(232,68,90,.13);border-color:var(--rose);pointer-events:none;}
+.opt.dimmed{pointer-events:none;opacity:.4;}
+.oletter{width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.09);color:rgba(255,255,255,.55);font-family:'DM Mono',monospace;font-size:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.opt.correct .oletter{background:var(--green);color:var(--white);}
+.opt.wrong .oletter{background:var(--rose);color:var(--white);}
+.otext{font-size:13.5px;color:rgba(255,255,255,.7);line-height:1.5;}
+.opt.correct .otext,.opt.wrong .otext{color:rgba(255,255,255,.9);}
+.fb{display:none;margin-top:10px;padding:10px 14px;border-radius:8px;font-size:13px;line-height:1.55;}
+.fb.show{display:block;}
+.fb.ok{background:rgba(33,161,121,.13);border:1px solid rgba(33,161,121,.26);color:rgba(255,255,255,.82);}
+.fb.bad{background:rgba(232,68,90,.1);border:1px solid rgba(232,68,90,.22);color:rgba(255,255,255,.78);}
+.fb strong{color:var(--teal);}
+.fb.bad strong{color:#f07080;}
+
+.sum-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:13px;margin:20px 0 40px;}
+.sum-card{background:var(--white);border:1px solid var(--cream-dark);border-radius:12px;padding:18px 16px;box-shadow:0 2px 8px rgba(0,0,0,.04);transition:transform .2s,box-shadow .2s;}
+.sum-card:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,.08);}
+.sum-icon{font-size:22px;margin-bottom:9px;}
+.sum-card h4{font-size:13px;font-weight:600;color:var(--navy);margin-bottom:4px;}
+.sum-card p{font-size:12.5px;color:var(--muted);line-height:1.5;margin:0;}
+
+footer{background:var(--navy);padding:40px;text-align:center;margin-top:72px;}
+footer p{font-size:12.5px;color:rgba(255,255,255,.28);}
+footer strong{color:rgba(255,255,255,.45);}
+
+@media(max-width:640px){
+  .hero{padding:52px 24px 44px;}
+  .wrap{padding:0 18px;}
+  .dir-wrap{flex-direction:column;}
+  .dir-col.in-col,.dir-col.out-col{border-radius:13px;border:1.5px solid rgba(0,180,166,.18);}
+  .dir-col.out-col{border-color:rgba(245,166,35,.18);}
+  .dir-mid{flex-direction:row;padding:12px;border:1.5px solid var(--cream-dark);border-radius:10px;}
+  .kc{padding:26px 20px;}
+  .flow::before{display:none;}
+}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="eyebrow">Payroll Analyst Guide · EN Internal Training</div>
+  <h1>How EN <span class="t">Receives</span> &amp; <span class="a">Sends</span> Payroll Data</h1>
+  <p class="hero-sub">A plain-language guide to inbound partner webhooks, EN's internal notification engine, and everything EN pushes outbound — demographics, deductions, and employer contributions.</p>
+  <div class="hero-chips">
+    <div class="chip"><div class="chip-dot" style="background:var(--teal)"></div>Inbound: Partner &rarr; EN</div>
+    <div class="chip"><div class="chip-dot" style="background:var(--amber)"></div>EN's Notification Engine</div>
+    <div class="chip"><div class="chip-dot" style="background:var(--rose)"></div>Outbound: EN &rarr; Partner</div>
+    <div class="chip"><div class="chip-dot" style="background:var(--violet)"></div>Knowledge Checks</div>
+  </div>
+</div>
+
+<div class="toc-bar">
+  <div class="toc-item active" onclick="jumpTo('s1')">Inbound Webhooks</div>
+  <div class="toc-item" onclick="jumpTo('s2')">EN's Notification Engine</div>
+  <div class="toc-item" onclick="jumpTo('s3')">Outbound: Demographics</div>
+  <div class="toc-item" onclick="jumpTo('s4')">Outbound: Deductions &amp; ER Contribs</div>
+  <div class="toc-item" onclick="jumpTo('s5')">The Full Picture</div>
+</div>
+
+<div class="pbar">
+  <span class="pbar-label">Progress</span>
+  <div class="pbar-track"><div class="pbar-fill" id="pbarFill"></div></div>
+  <span class="pbar-count" id="pbarCount">0 / 5 sections</span>
+</div>
+
+<div class="wrap">
+
+<!-- SECTION 1 -->
+<div class="section" id="s1">
+  <div class="sec-label"><div class="sec-badge bg-teal">1</div><span class="sec-eyebrow">Inbound · Partner &rarr; EN</span></div>
+  <h2>Inbound: The Partner Sends EN a Webhook</h2>
+  <p class="lead">When something changes in the payroll system — a new hire, an address update, a compensation change — the partner doesn't wait for EN to ask. They <em>push</em> a notification to EN immediately. This is called a <strong>webhook</strong>.</p>
+
+  <div class="dir-wrap">
+    <div class="dir-col in-col">
+      <div class="dir-col-tag tc">Direction</div>
+      <h3>Partner &rarr; Employee Navigator</h3>
+      <p>Partner fires a thin webhook to EN's notification endpoint. EN receives it, looks up the employee, and calls <strong>Get Employee</strong> to fetch the full updated record.</p>
+    </div>
+    <div class="dir-mid">
+      <div class="dir-arr">&#128424;</div>
+      <div class="dir-tag tc">Inbound</div>
+    </div>
+    <div class="dir-col out-col">
+      <div class="dir-col-tag ac">What EN does with it</div>
+      <h3>EN Fetches, Evaluates &amp; Updates</h3>
+      <p>EN calls <strong>Get Employee</strong>, checks for PII conflicts, evaluates identifier logic, and updates EN's records to stay in sync.</p>
+    </div>
+  </div>
+
+  <div class="analogy">
+    <div class="analogy-icon">&#128223;</div>
+    <div class="analogy-body">
+      <div class="an-tag">Think of it like this</div>
+      <p>A webhook is like a <strong>pager notification</strong>. It doesn't contain the full message — it just says "hey, something changed, go look it up." When a payroll partner sends EN a webhook, it typically only includes a <strong>Company ID</strong> and an <strong>Employee ID</strong>. That's it. This intentionally minimal payload is called a <span class="an-a">"thin event."</span></p>
+      <p>EN then uses those two identifiers to call <strong>Get Employee</strong> on the partner — "give me the full, current record for this person." This two-step design keeps webhooks fast and lightweight while ensuring EN always receives fresh, complete data.</p>
+    </div>
+  </div>
+
+  <h3 style="font-family:'Playfair Display',serif;font-size:19px;color:var(--navy);margin:28px 0 6px;">Step-by-Step: What Happens When EN Receives a Webhook</h3>
+  <p class="lead">Here's the full sequence from the moment a partner fires a notification to the moment EN's records are updated.</p>
+
+  <div class="flow">
+    <div class="frow">
+      <div class="ficol"><div class="ficon fi-a">&#127970;</div><div class="fline"></div></div>
+      <div class="fbody">
+        <div class="fwho">Partner System &middot; Trigger</div>
+        <div class="ftitle">A change occurs in payroll</div>
+        <div class="fdesc">An HR admin updates an employee's address in Paylocity. A new hire is entered in Paychex. A compensation change is made in ADP. The partner's system detects this and fires a notification to EN automatically — no one at EN needs to request it.</div>
+      </div>
+    </div>
+    <div class="frow">
+      <div class="ficol"><div class="ficon fi-t">&#128424;</div><div class="fline"></div></div>
+      <div class="fbody">
+        <div class="fwho">Partner &rarr; EN &middot; Thin Webhook</div>
+        <div class="ftitle">Partner fires a thin notification to EN</div>
+        <div class="fdesc">The webhook payload is minimal — it contains the <code>CompanyIdentifier</code> (which maps to an EN Client/Subscriber Group) and an <code>EmployeeIdentifier</code> (the unique ID linking this person across both systems). No PII, no field-level details — just "something changed for this person at this company."</div>
+      </div>
+    </div>
+    <div class="frow">
+      <div class="ficol"><div class="ficon fi-t">&#128269;</div><div class="fline"></div></div>
+      <div class="fbody">
+        <div class="fwho">EN &middot; Lookup</div>
+        <div class="ftitle">EN resolves the Company &amp; Employee identifiers</div>
+        <div class="fdesc">EN looks up the <code>CompanyIdentifier</code> to find the matching EN client and Subscriber Group. It then looks up the <code>EmployeeIdentifier</code> to find the matching EN employee record. If EN can't find a match, the notification is flagged for analyst review.</div>
+      </div>
+    </div>
+    <div class="frow">
+      <div class="ficol"><div class="ficon fi-g">&#128229;</div><div class="fline"></div></div>
+      <div class="fbody">
+        <div class="fwho">EN &rarr; Partner &middot; Get Employee</div>
+        <div class="ftitle">EN calls <span class="ep ep-get">Get Employee</span> to fetch the full record</div>
+        <div class="fdesc">Now that EN knows <em>who</em> changed, it calls <strong>Get Employee</strong> on the partner. The partner returns the complete current record — name, address, DOB, sex, phone, email, compensation, hire/term dates, and more.</div>
+      </div>
+    </div>
+    <div class="frow">
+      <div class="ficol"><div class="ficon fi-v">&#128737;</div><div class="fline"></div></div>
+      <div class="fbody">
+        <div class="fwho">EN &middot; Validation</div>
+        <div class="ftitle">EN evaluates the incoming data for conflicts</div>
+        <div class="fdesc">Before writing anything, EN checks for issues:
+          <ul>
+            <li><strong>PII conflicts</strong> — if the incoming Name, SSN, or DOB doesn't match what's in EN, the change is <strong>blocked and flagged</strong> for analyst review. EN will not silently overwrite PII.</li>
+            <li><strong>Identifier logic</strong> — EN evaluates Active vs. Inactive identifiers. If a termination date is present on a non-primary inactive identifier, it's flagged rather than auto-applied.</li>
+            <li><strong>Blank/invalid SSN</strong> — EN will not create or update a record with a blank SSN or certain 1099 tax form types.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="frow">
+      <div class="ficol"><div class="ficon fi-g">&#9989;</div></div>
+      <div class="fbody">
+        <div class="fwho">EN &middot; Write</div>
+        <div class="ftitle">EN updates the employee record</div>
+        <div class="fdesc">If no conflicts are found, EN writes the changes — demographic fields are updated, compensation is recorded, hire/term status is reflected. The sync typically completes within <strong>45–60 seconds</strong> of the original change in the partner system.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout ro">
+    <div class="ctag rc">Important: What Payroll Owns vs. What EN Owns</div>
+    <p>Not all changes flow both ways. The payroll system is the <strong>system of record</strong> for certain fields — meaning even if someone edits them in EN, payroll's version wins on the next sync.</p>
+    <ul>
+      <li><strong>Payroll &rarr; EN only (1-way):</strong> New hires, terminations, base compensation (salary/hourly rate), pay effective dates</li>
+      <li><strong>Bi-directional (either system):</strong> Name, address, DOB, sex, phone, email</li>
+      <li><strong>EN &rarr; Payroll only (1-way):</strong> Benefit deductions, employer contributions, enrollment effective dates</li>
+    </ul>
+  </div>
+
+  <div class="callout am">
+    <div class="ctag ac">Fat Events vs. Thin Events</div>
+    <p>Some partners (like UKG) explored sending "fat events" — webhooks that include all changed field values directly, so EN doesn't need to make a follow-up Get Employee call. EN's preferred pattern is the <strong>thin event + Get Employee</strong> because it guarantees EN always has the complete, current record rather than relying on a partial snapshot baked into the webhook payload.</p>
+  </div>
+
+  <div class="kc">
+    <div class="kc-head"><div class="kc-badge">Knowledge Check</div><div class="kc-title">Inbound Webhooks</div></div>
+    <div class="qblock">
+      <div class="qtext">1. An HR admin updates an employee's home address in Paylocity at 2:00 PM. Assuming the integration is live, when should EN reflect this change?</div>
+      <div class="opts" id="q1">
+        <button class="opt" onclick="answer('q1',this,false)"><div class="oletter">A</div><div class="otext">The next business day, when EN's daily sync job runs overnight</div></button>
+        <button class="opt" onclick="answer('q1',this,true)"><div class="oletter">B</div><div class="otext">Within 45–60 seconds — Paylocity fires a thin webhook, EN calls Get Employee, and the update is written to EN</div></button>
+        <button class="opt" onclick="answer('q1',this,false)"><div class="oletter">C</div><div class="otext">When the broker manually triggers a Demographic Audit in EN</div></button>
+        <button class="opt" onclick="answer('q1',this,false)"><div class="oletter">D</div><div class="otext">Only during Open Enrollment processing</div></button>
+      </div>
+      <div class="fb ok" id="q1-fb"><strong>Correct!</strong> The thin webhook + Get Employee pattern is real-time. Paylocity fires a notification the moment the address changes, EN calls Get Employee to retrieve the full record, and the update is written to EN within about a minute. No human action is needed unless EN detects a conflict.</div>
+    </div>
+    <div class="qblock">
+      <div class="qtext">2. EN receives a webhook for an employee. The Get Employee response shows a different SSN than what EN has on file. What happens?</div>
+      <div class="opts" id="q2">
+        <button class="opt" onclick="answer('q2',this,false)"><div class="oletter">A</div><div class="otext">EN automatically updates the SSN to match payroll — payroll is the system of record for all fields</div></button>
+        <button class="opt" onclick="answer('q2',this,true)"><div class="oletter">B</div><div class="otext">The change is blocked and flagged as a PII conflict for analyst review — EN will never silently overwrite PII</div></button>
+        <button class="opt" onclick="answer('q2',this,false)"><div class="oletter">C</div><div class="otext">EN sends an email to the employee asking them to confirm their SSN</div></button>
+        <button class="opt" onclick="answer('q2',this,false)"><div class="oletter">D</div><div class="otext">EN deletes the employee record and creates a new one with the payroll SSN</div></button>
+      </div>
+      <div class="fb ok" id="q2-fb"><strong>Correct!</strong> PII mismatches — name, SSN, DOB — are always blocked and surfaced for analyst review. This is a hard safety guard. EN will never silently overwrite sensitive identity fields. You'll see these flagged on the Integration Health Dashboard.</div>
+    </div>
+    <div class="qblock">
+      <div class="qtext">3. Why does EN use the "thin webhook + Get Employee" pattern rather than having the partner embed all changed fields in the webhook itself?</div>
+      <div class="opts" id="q3">
+        <button class="opt" onclick="answer('q3',this,false)"><div class="oletter">A</div><div class="otext">Because EN's servers can't handle large webhook payloads</div></button>
+        <button class="opt" onclick="answer('q3',this,false)"><div class="oletter">B</div><div class="otext">Because payroll partners charge per field transmitted in a webhook</div></button>
+        <button class="opt" onclick="answer('q3',this,true)"><div class="oletter">C</div><div class="otext">Because Get Employee guarantees EN always receives the complete, current record — not just a partial snapshot of what changed at that moment</div></button>
+        <button class="opt" onclick="answer('q3',this,false)"><div class="oletter">D</div><div class="otext">Regulatory requirements prohibit sending full employee data in a webhook</div></button>
+      </div>
+      <div class="fb ok" id="q3-fb"><strong>Correct!</strong> A fat webhook only captures fields changed at that instant. By following up with Get Employee, EN pulls the full, authoritative current record — catching any other updates that may have happened simultaneously and ensuring nothing is missed.</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- SECTION 2 -->
+<div class="section" id="s2">
+  <div class="sec-label"><div class="sec-badge bg-violet">2</div><span class="sec-eyebrow">Under the Hood &middot; EN's Outbound Queue</span></div>
+  <h2>How EN Queues Up Outbound Transmissions</h2>
+  <p class="lead">Before EN can send deduction or demographic data to a partner, it has to decide <em>what</em> needs to be sent and to <em>whom</em>. This is handled by EN's internal notification engine — a system that flags changes and queues them for delivery.</p>
+
+  <div class="analogy">
+    <div class="analogy-icon">&#128236;</div>
+    <div class="analogy-body">
+      <div class="an-tag">Think of it like this</div>
+      <p>Imagine a <strong>mailroom with a pickup bin</strong>. When a deduction changes, EN doesn't immediately call the partner — it first places a slip in the bin saying "this employee's deduction needs to be sent." A background job (the "mail carrier") checks the bin, picks up everything flagged, and delivers it.</p>
+      <p>The bin is the <strong><code>partner_deduction_notification</code></strong> table. The "ready to deliver" flag is a null <span class="an-a"><code>processed_date</code></span>. The push job finds all rows where <code>processed_date IS NULL</code>, sends them, and stamps them with a timestamp to mark them delivered.</p>
+    </div>
+  </div>
+
+  <div class="tbl">
+    <div class="tbl-hdr"><span>The Two Key Notification Tables</span></div>
+    <table>
+      <thead><tr><th>Table</th><th>Purpose</th><th>Key Fields</th><th>Behavior</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><code style="font-family:'DM Mono',monospace;font-size:12px;color:var(--teal-dim);">partner_deduction_notification</code></td>
+          <td>Tracks which deductions need to be sent to which subscriber</td>
+          <td>
+            <span class="pill pt">marketplace_subscriber_id</span><br>
+            <span class="pill pt" style="margin-top:4px;display:inline-block;">payroll_recurring_deduction_id</span><br>
+            <span class="pill pr" style="margin-top:4px;display:inline-block;">processed_date (null = pending)</span>
+          </td>
+          <td>One row per deduction per subscriber. When a change is detected, <code style="font-size:12px;font-family:'DM Mono',monospace;">processed_date</code> resets to NULL. The push job reads nulls, transmits, then sets the timestamp.</td>
+        </tr>
+        <tr>
+          <td><code style="font-family:'DM Mono',monospace;font-size:12px;color:var(--teal-dim);">partner_api_notification</code></td>
+          <td>Boolean flag per subscriber/endpoint — tells the push job "go send for this subscriber now"</td>
+          <td>
+            <span class="pill pt">marketplace_subscriber_id</span><br>
+            <span class="pill pa" style="margin-top:4px;display:inline-block;">endpoint_type_id</span>
+          </td>
+          <td>Only 2 rows per subscriber (one per endpoint type). <strong>Overwritten each time</strong> — it's not a history log, it's a "do I need to push right now?" on/off flag.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout">
+    <div class="ctag tc">Why Only 2 Rows Per Subscriber in partner_api_notification?</div>
+    <p>Each subscriber only ever has two endpoint types: one for <strong>Demographics</strong> and one for <strong>Deductions</strong>. The table doesn't grow with each change — it's a simple on/off switch. When a change happens, EN flips the flag to "needs push." The background push job checks it, pulls all pending notifications for that subscriber, and sends them. Think of it as a light switch, not a receipt log.</p>
+  </div>
+
+  <h3 style="font-family:'Playfair Display',serif;font-size:19px;color:var(--navy);margin:28px 0 6px;">How a Deduction Gets Into the Queue</h3>
+
+  <div class="flow out-flow">
+    <div class="frow">
+      <div class="ficol"><div class="ficon fi-a">&#128260;</div><div class="fline"></div></div>
+      <div class="fbody">
+        <div class="fwho">EN Internal &middot; Change Detected</div>
+        <div class="ftitle">EN evaluates deduction pairs and flags eligible ones</div>
+        <div class="fdesc">During processing (enrollment, rate change, OE, QLE, etc.), EN checks matched deduction pairs and marks eligible ones as <code>ForTransmission</code>. The ID from <code>payroll_recurring_deductions</code> is collected for each.</div>
+      </div>
+    </div>
+    <div class="frow">
+      <div class="ficol"><div class="ficon fi-a">&#128221;</div><div class="fline"></div></div>
+      <div class="fbody">
+        <div class="fwho">EN Internal &middot; NotificationCriteria</div>
+        <div class="ftitle">A NotificationCriteria object is created</div>
+        <div class="fdesc">The eligible deduction ID is wrapped in a <code>NotificationCriteria</code> object and passed to <code>DeductionNotifier.CreateNotifications</code>, which orchestrates everything that follows.</div>
+      </div>
+    </div>
+    <div class="frow">
+      <div class="ficol"><div class="ficon fi-a">&#128270;</div><div class="fline"></div></div>
+      <div class="fbody">
+        <div class="fwho">EN Internal &middot; Subscriber Lookup</div>
+        <div class="ftitle">EN finds the right subscriber to send to</div>
+        <div class="fdesc">The <code>NotifiableSubscriberFetcher</code> class queries <code>dbo.view_active_product_subscriptions</code> using the broker/client combination and feature type (Demographics or Deductions). If no specific subscriber is set on the criteria, EN falls back to payday processing logic to identify the correct subscriber group.</div>
+      </div>
+    </div>
+    <div class="frow">
+      <div class="ficol"><div class="ficon fi-a">&#128190;</div><div class="fline"></div></div>
+      <div class="fbody">
+        <div class="fwho">EN Internal &middot; WriteNotifications</div>
+        <div class="ftitle">The notification row is written to the database</div>
+        <div class="fdesc"><code>DeductionNotificationWriter.WriteNotifications()</code> either <strong>inserts a new row</strong> if one doesn't exist, or <strong>resets <code>processed_date</code> to NULL</strong> on the existing row — signaling "this needs to be sent again." It cross-references <code>view_employee_primary_payroll</code> to confirm the subscriber match.</div>
+      </div>
+    </div>
+    <div class="frow">
+      <div class="ficol"><div class="ficon fi-g">&#128640;</div></div>
+      <div class="fbody">
+        <div class="fwho">EN Internal &middot; Push Job</div>
+        <div class="ftitle">PartnerApiNotifier flips the send flag and delivery begins</div>
+        <div class="fdesc"><code>PartnerApiNotifier.NotifyViaEndpointTypeId</code> updates <code>partner_api_notification</code> — flipping the boolean for that subscriber/endpoint type to "push now." The push job checks this flag, retrieves all pending rows with a null <code>processed_date</code>, and transmits them as <span class="ep ep-post">Payroll Deduction</span> or <span class="ep ep-post">Payroll Employer Contribution</span> calls to the partner.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout am">
+    <div class="ctag ac">What "VATI" Means</div>
+    <p>You may hear the term <strong>VATI</strong> in engineering discussions. It refers to a row in <code>partner_deduction_notification</code> — one VATI per deduction per subscriber. Each VAT (the partner connection) will only ever have <strong>demographic VATIs or deduction VATIs</strong>, never both in the same row. The <code>partner_api_notification</code> table is the VAT initiator — the switch that tells the push job to go.</p>
+  </div>
+
+  <div class="kc">
+    <div class="kc-head"><div class="kc-badge">Knowledge Check</div><div class="kc-title">EN's Notification Engine</div></div>
+    <div class="qblock">
+      <div class="qtext">1. A deduction is flagged for transmission. What does a null <code>processed_date</code> in <code>partner_deduction_notification</code> mean?</div>
+      <div class="opts" id="q4">
+        <button class="opt" onclick="answer('q4',this,false)"><div class="oletter">A</div><div class="otext">The deduction was sent successfully and the timestamp was cleared afterward</div></button>
+        <button class="opt" onclick="answer('q4',this,true)"><div class="oletter">B</div><div class="otext">The deduction is pending — it hasn't been picked up and sent by the push job yet</div></button>
+        <button class="opt" onclick="answer('q4',this,false)"><div class="oletter">C</div><div class="otext">The deduction was rejected by the partner and is waiting for analyst correction</div></button>
+        <button class="opt" onclick="answer('q4',this,false)"><div class="oletter">D</div><div class="otext">There is no effective date set on the deduction in EN</div></button>
+      </div>
+      <div class="fb ok" id="q4-fb"><strong>Correct!</strong> A null <code>processed_date</code> is the "pickup slip in the bin" — it means the deduction is queued and waiting for the push job to collect and transmit it. Once sent, the push job stamps the row with the current timestamp. If a change happens again later, the date resets to null to re-queue it.</div>
+    </div>
+    <div class="qblock">
+      <div class="qtext">2. Why does the <code>partner_api_notification</code> table only have 2 rows per subscriber, and why does EN overwrite them instead of adding new rows?</div>
+      <div class="opts" id="q5">
+        <button class="opt" onclick="answer('q5',this,false)"><div class="oletter">A</div><div class="otext">It's a bug — the table should grow with each notification but a cleanup job deletes old records</div></button>
+        <button class="opt" onclick="answer('q5',this,false)"><div class="oletter">B</div><div class="otext">Each subscriber only has 2 employees, so only 2 rows are needed</div></button>
+        <button class="opt" onclick="answer('q5',this,true)"><div class="oletter">C</div><div class="otext">It's a boolean on/off switch — one row per endpoint type (Demographics, Deductions). EN only needs to know "push needed: yes or no" right now, so it overwrites rather than appends.</div></button>
+        <button class="opt" onclick="answer('q5',this,false)"><div class="oletter">D</div><div class="otext">The partner's API only allows 2 transmissions per subscriber per day</div></button>
+      </div>
+      <div class="fb ok" id="q5-fb"><strong>Correct!</strong> The <code>partner_api_notification</code> table is a simple switch — not a queue or history log. Two rows: one for Demographics, one for Deductions. When EN needs to push, it flips the flag. The push job checks it, sends everything pending from <code>partner_deduction_notification</code>, and the flag resets. Actual history lives in the <code>partner_deduction_notification</code> rows with their <code>processed_date</code> timestamps.</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- SECTION 3 -->
+<div class="section" id="s3">
+  <div class="sec-label"><div class="sec-badge bg-amber">3</div><span class="sec-eyebrow">Outbound &middot; EN &rarr; Partner</span></div>
+  <h2>Outbound: Demographics</h2>
+  <p class="lead">Demographics flow <em>both ways</em> — the partner can push changes to EN via webhook (Section 1), and EN can push changes back to the partner when something is updated in EN. Here's how the EN &rarr; Partner direction works.</p>
+
+  <div class="dir-wrap">
+    <div class="dir-col in-col">
+      <div class="dir-col-tag tc">EN calls</div>
+      <h3><span class="ep ep-post">Update Employee</span></h3>
+      <p>When a demographic field changes in EN, EN pushes the updated fields to the partner via <strong>Update Employee</strong>. Only changed fields are sent — not the full record each time.</p>
+    </div>
+    <div class="dir-mid">
+      <div class="dir-arr">&#128228;</div>
+      <div class="dir-tag ac">Outbound</div>
+    </div>
+    <div class="dir-col out-col">
+      <div class="dir-col-tag ac">Timing</div>
+      <h3>Real-Time, Change-Based</h3>
+      <p>Changes sync to the partner within ~45–60 seconds of being saved in EN.</p>
+    </div>
+  </div>
+
+  <div class="tbl">
+    <div class="tbl-hdr"><span>Demographic Fields Exchanged</span></div>
+    <table>
+      <thead><tr><th>Field</th><th>Direction</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td>First / Last Name</td><td><span class="pill pt">Bi-directional</span></td><td>Changes in either system sync to the other via Get Employee (inbound) or Update Employee (outbound)</td></tr>
+        <tr><td>Home Address</td><td><span class="pill pt">Bi-directional</span></td><td>Street, city, state, ZIP. Work/Mobile phone types may not map depending on the partner.</td></tr>
+        <tr><td>Date of Birth</td><td><span class="pill pt">Bi-directional</span></td><td>PII — mismatches always block the update and flag for analyst review</td></tr>
+        <tr><td>Sex</td><td><span class="pill pt">Bi-directional</span></td><td>Included in the demographic exchange across all partners</td></tr>
+        <tr><td>Phone / Email</td><td><span class="pill pt">Bi-directional</span></td><td>Home Phone typically; scope may vary by partner</td></tr>
+        <tr><td>Hire Date</td><td><span class="pill pg">Payroll &rarr; EN only</span></td><td>New hires must be created in payroll first for most partners — EN receives this via Get Employee after the new hire webhook</td></tr>
+        <tr><td>Termination Date</td><td><span class="pill pg">Payroll &rarr; EN only</span></td><td>EN does not push terminations to payroll; payroll owns term dates</td></tr>
+        <tr><td>Base Compensation</td><td><span class="pill pg">Payroll &rarr; EN only</span></td><td>Hourly/salary rate and pay effective date — payroll is the system of record</td></tr>
+        <tr><td>SSN</td><td><span class="pill pr">Conflict-blocked</span></td><td>Mismatches are always blocked and flagged — never auto-updated in either direction</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout ro">
+    <div class="ctag rc">New Hires — Payroll First</div>
+    <p>For most payroll partners, <strong>new hires must be entered in payroll first</strong>. The partner fires a webhook to EN, EN calls <strong>Get Employee</strong> to retrieve the full profile, and EN creates the employee record. The broker or HR admin is alerted on the EN Homepage under <em>"Complete Employees Missing HR Required Fields."</em> If a new hire is created in EN first, the integration may not link correctly until a Payroll ID is manually assigned to the employee in EN.</p>
+  </div>
+
+  <div class="callout am">
+    <div class="ctag ac">Heads Up: Paylocity Auto-Notifies Employees</div>
+    <p>Paylocity is unique — when EN calls <strong>Update Employee</strong> to push a demographic change, Paylocity automatically sends the employee an email notifying them their profile was updated. This is expected behavior, but worth flagging when setting up clients so HR admins know why employees may receive these notifications.</p>
+  </div>
+
+  <div class="kc">
+    <div class="kc-head"><div class="kc-badge">Knowledge Check</div><div class="kc-title">Outbound Demographics</div></div>
+    <div class="qblock">
+      <div class="qtext">1. An HR admin updates an employee's email address in EN on a Wednesday morning. What does EN do next?</div>
+      <div class="opts" id="q6">
+        <button class="opt" onclick="answer('q6',this,false)"><div class="oletter">A</div><div class="otext">EN waits for the partner to call Get Employee on its next scheduled audit run</div></button>
+        <button class="opt" onclick="answer('q6',this,true)"><div class="oletter">B</div><div class="otext">EN calls Update Employee on the partner in real-time — the updated email syncs within ~45–60 seconds</div></button>
+        <button class="opt" onclick="answer('q6',this,false)"><div class="oletter">C</div><div class="otext">EN sends the full employee record to the partner, including all fields regardless of what changed</div></button>
+        <button class="opt" onclick="answer('q6',this,false)"><div class="oletter">D</div><div class="otext">EN holds the change until the next Open Enrollment sync</div></button>
+      </div>
+      <div class="fb ok" id="q6-fb"><strong>Correct!</strong> Demographic outbound pushes are real-time and change-based. EN calls Update Employee on the partner with only the fields that changed — not the full record. This happens automatically within about a minute of the edit being saved in EN.</div>
+    </div>
+    <div class="qblock">
+      <div class="qtext">2. A new employee was added in EN before being set up in payroll. Their deductions aren't transmitting. What's the most likely cause?</div>
+      <div class="opts" id="q7">
+        <button class="opt" onclick="answer('q7',this,false)"><div class="oletter">A</div><div class="otext">EN doesn't support new hires added outside of Open Enrollment</div></button>
+        <button class="opt" onclick="answer('q7',this,false)"><div class="oletter">B</div><div class="otext">The deduction codes haven't been mapped yet in EN</div></button>
+        <button class="opt" onclick="answer('q7',this,true)"><div class="oletter">C</div><div class="otext">The employee doesn't have a Payroll ID assigned in EN — without that link, EN has no identifier to include when sending Update Employee or Payroll Deduction calls to the partner</div></button>
+        <button class="opt" onclick="answer('q7',this,false)"><div class="oletter">D</div><div class="otext">The integration is in Audit Mode and hasn't been activated yet</div></button>
+      </div>
+      <div class="fb ok" id="q7-fb"><strong>Correct!</strong> For most partners, new hires need to be added in payroll first so the partner fires a webhook, EN calls Get Employee, and the Payroll ID gets linked to the EN record automatically. When a new hire is created in EN first, no Payroll ID exists — EN has no identifier to include in Update Employee or Payroll Deduction calls. Fix: assign the correct Payroll ID in EN to match the partner's record, then re-push.</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- SECTION 4 -->
+<div class="section" id="s4">
+  <div class="sec-label"><div class="sec-badge bg-amber">4</div><span class="sec-eyebrow">Outbound &middot; EN &rarr; Partner</span></div>
+  <h2>Outbound: Deductions &amp; Employer Contributions</h2>
+  <p class="lead">This is EN's primary value in the integration: pushing benefit deductions and employer contributions to payroll so they're automatically reflected in employee paychecks. This flows <strong>one way only</strong> — EN to the partner.</p>
+
+  <div class="dir-wrap">
+    <div class="dir-col in-col">
+      <div class="dir-col-tag tc">EN calls</div>
+      <h3><span class="ep ep-post">Payroll Deduction</span> &amp; <span class="ep ep-post">Payroll Employer Contribution</span></h3>
+      <p>Per-pay amounts, deduction codes, effective start dates, and end dates — all driven by benefit enrollments in EN.</p>
+    </div>
+    <div class="dir-mid">
+      <div class="dir-arr">&#128228;</div>
+      <div class="dir-tag ac">One-Way Outbound</div>
+    </div>
+    <div class="dir-col out-col">
+      <div class="dir-col-tag ac">Partner receives</div>
+      <h3>Payroll Updates the Employee's Record</h3>
+      <p>The partner applies the deduction to the employee's payroll profile. It appears on the next pay date after the effective start date.</p>
+    </div>
+  </div>
+
+  <div class="ob-cards">
+    <div class="ob-card">
+      <div class="ob-card-hdr">
+        <div class="ob-card-icon fi-a" style="background:rgba(245,166,35,.1);border:1.5px solid rgba(245,166,35,.26);">&#128184;</div>
+        <div>
+          <div class="ob-card-title">Employee Deductions &nbsp;<span class="ep ep-post" style="font-size:11px;">Payroll Deduction</span></div>
+          <div class="ob-card-sub">The per-paycheck amount withheld from the employee's paycheck for their benefit coverage</div>
+        </div>
+      </div>
+      <div class="ob-card-body">
+        <p>EN sends the <strong>flat per-pay dollar amount</strong> for each benefit the employee is enrolled in — medical, dental, vision, FSA, HSA (employee portion), life, disability, and more. EN does not send percentages or retirement/401(k) contributions.</p>
+        <p>Each Payroll Deduction call is tied to a <strong>deduction code</strong> that the payroll partner owns and maps to a specific plan. A single character mismatch between EN's mapped code and the partner's active code will cause a Needs Action failure.</p>
+        <div class="ob-triggers">
+          <span class="trigger-tag">Initial enrollment</span>
+          <span class="trigger-tag">Open Enrollment</span>
+          <span class="trigger-tag">QLE / life event</span>
+          <span class="trigger-tag">Rate recalculation</span>
+          <span class="trigger-tag">Termination (end-date sent)</span>
+          <span class="trigger-tag">Deduction code change</span>
+          <span class="trigger-tag">Enrollment editor adjustment</span>
+        </div>
+      </div>
+    </div>
+    <div class="ob-card">
+      <div class="ob-card-hdr">
+        <div class="ob-card-icon fi-g" style="background:rgba(33,161,121,.1);border:1.5px solid rgba(33,161,121,.24);">&#127970;</div>
+        <div>
+          <div class="ob-card-title">Employer Contributions &nbsp;<span class="ep ep-post" style="font-size:11px;">Payroll Employer Contribution</span></div>
+          <div class="ob-card-sub">The per-paycheck amount the employer contributes toward the employee's benefit coverage</div>
+        </div>
+      </div>
+      <div class="ob-card-body">
+        <p>Where supported, EN also sends the <strong>employer's per-pay contribution</strong> via a separate Payroll Employer Contribution call — the portion the company pays toward an employee's medical premium, for example. These use separate employer contribution codes, distinct from the employee deduction code.</p>
+        <p><strong>Exceptions:</strong> Employer contributions for Group Life, Group AD&amp;D, and HSA are <em>not</em> transmitted — but the employee deductions for those plans still are. This is a known limitation across all current partners.</p>
+        <div class="ob-triggers">
+          <span class="trigger-tag" style="text-decoration:line-through;opacity:.5;">HSA employer contrib &#10007;</span>
+          <span class="trigger-tag" style="text-decoration:line-through;opacity:.5;">Group Life ER &#10007;</span>
+          <span class="trigger-tag" style="text-decoration:line-through;opacity:.5;">AD&amp;D ER &#10007;</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tbl">
+    <div class="tbl-hdr"><span>What EN Sends &amp; When</span></div>
+    <table>
+      <thead><tr><th>Scenario</th><th>What Gets Sent</th><th>Timing</th></tr></thead>
+      <tbody>
+        <tr><td><strong>New enrollment (QLE or new hire)</strong></td><td>Payroll Deduction with code, start date, and per-pay amount</td><td>Real-time after enrollment is submitted</td></tr>
+        <tr><td><strong>Open Enrollment closeout</strong></td><td>New, changed, and ended Payroll Deduction calls for all employees in the group</td><td>Early morning on the broker's chosen Send Deductions Date</td></tr>
+        <tr><td><strong>Rate recalculation</strong></td><td>Updated Payroll Deduction with revised per-pay amount</td><td>Real-time when rates change</td></tr>
+        <tr><td><strong>Termination</strong></td><td>Payroll Deduction with end-date applied to all active deductions</td><td>Real-time when termination is processed</td></tr>
+        <tr><td><strong>Deduction code updated in EN</strong></td><td>Old code end-dated + new Payroll Deduction with start-date and new code</td><td>Real-time after code is updated</td></tr>
+        <tr><td><strong>Enrollment editor adjustment</strong></td><td>Corrected Payroll Deduction with updated amount and/or dates</td><td>Real-time after edit is saved</td></tr>
+        <tr><td><strong>Missed pay periods (retroactive)</strong></td><td><span class="pill pr">NOT sent automatically</span></td><td>Use Retroactive Deductions report: Payroll &rarr; Reports &rarr; Retroactive Deductions</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout">
+    <div class="ctag tc">Deduction Codes — The Critical Link</div>
+    <p>A deduction code is the <strong>shared language</strong> between EN and the payroll partner. The partner creates and owns these codes in their system (e.g., "MED-EE" for employee medical). EN maps each benefit plan to the correct code during integration setup. If the code in EN doesn't exactly match the active code in payroll, the Payroll Deduction call will fail and appear as a <strong>Needs Action</strong> error on the Integration Health Dashboard.</p>
+  </div>
+
+  <div class="callout am">
+    <div class="ctag ac">Effective Dates vs. Pay Dates</div>
+    <p>EN sends the <strong>benefit effective date</strong> as the deduction start date in the Payroll Deduction call — not the pay date. If a deduction start date is November 1st and the next pay date is November 5th, the deduction appears on the November 5th check. <strong>EN does not pro-rate</strong> for mid-period starts. If the deduction needs to align with a specific pay date, it must be manually adjusted once in the payroll system after EN transmits it.</p>
+  </div>
+
+  <div class="kc">
+    <div class="kc-head"><div class="kc-badge">Knowledge Check</div><div class="kc-title">Outbound Deductions &amp; ER Contributions</div></div>
+    <div class="qblock">
+      <div class="qtext">1. An employee completes a QLE enrollment on a Tuesday afternoon. When does the Payroll Deduction call go to the partner?</div>
+      <div class="opts" id="q8">
+        <button class="opt" onclick="answer('q8',this,false)"><div class="oletter">A</div><div class="otext">On the next Open Enrollment Send Deductions Date</div></button>
+        <button class="opt" onclick="answer('q8',this,true)"><div class="oletter">B</div><div class="otext">In real-time — the Payroll Deduction call is queued and transmitted as soon as the enrollment is submitted</div></button>
+        <button class="opt" onclick="answer('q8',this,false)"><div class="oletter">C</div><div class="otext">The following Monday, when EN's weekly sync job runs</div></button>
+        <button class="opt" onclick="answer('q8',this,false)"><div class="oletter">D</div><div class="otext">Only after an EN analyst manually approves and pushes the deduction</div></button>
+      </div>
+      <div class="fb ok" id="q8-fb"><strong>Correct!</strong> QLE enrollments trigger a real-time Payroll Deduction call. As soon as enrollment is submitted, EN flags the row in <code>partner_deduction_notification</code>, flips the push flag in <code>partner_api_notification</code>, and the background job transmits immediately — no analyst action required.</div>
+    </div>
+    <div class="qblock">
+      <div class="qtext">2. An employer contributes $150/month toward employee HSA accounts. Will EN transmit this via a Payroll Employer Contribution call automatically?</div>
+      <div class="opts" id="q9">
+        <button class="opt" onclick="answer('q9',this,true)"><div class="oletter">A</div><div class="otext">No — employer HSA contributions are a known exception. Only the employee's HSA deduction is sent via Payroll Deduction. The employer's HSA contribution must be set up manually in payroll.</div></button>
+        <button class="opt" onclick="answer('q9',this,false)"><div class="oletter">B</div><div class="otext">Yes — all HSA amounts (employee and employer) are automatically transmitted</div></button>
+        <button class="opt" onclick="answer('q9',this,false)"><div class="oletter">C</div><div class="otext">Only if the HSA is paired with an HDHP medical plan in EN</div></button>
+        <button class="opt" onclick="answer('q9',this,false)"><div class="oletter">D</div><div class="otext">Yes, but only during Open Enrollment — not for mid-year changes</div></button>
+      </div>
+      <div class="fb ok" id="q9-fb"><strong>Correct!</strong> Employer contributions for Group Life, Group AD&amp;D, and HSA are known exceptions — EN will not send a Payroll Employer Contribution call for these. The employee's own HSA deduction will still transmit via Payroll Deduction. Always flag this expectation when setting up HSA plans with a client.</div>
+    </div>
+    <div class="qblock">
+      <div class="qtext">3. After OE closes, 3 employees show Needs Action because their deduction codes were wrong in EN. The codes are now corrected. What must happen next?</div>
+      <div class="opts" id="q10">
+        <button class="opt" onclick="answer('q10',this,false)"><div class="oletter">A</div><div class="otext">Wait until the next Open Enrollment — Payroll Deduction calls can only be re-sent once per year</div></button>
+        <button class="opt" onclick="answer('q10',this,false)"><div class="oletter">B</div><div class="otext">EN automatically detects the corrected code and re-fires the Payroll Deduction call within 60 seconds</div></button>
+        <button class="opt" onclick="answer('q10',this,true)"><div class="oletter">C</div><div class="otext">Use the Actions menu on the Integration Health Dashboard to manually re-push the affected employees, which triggers a new Payroll Deduction call with the corrected codes</div></button>
+        <button class="opt" onclick="answer('q10',this,false)"><div class="oletter">D</div><div class="otext">The deductions need to be deleted and re-entered from scratch by the broker</div></button>
+      </div>
+      <div class="fb ok" id="q10-fb"><strong>Correct!</strong> Fixing the code mapping does not automatically re-trigger a Payroll Deduction call. After correcting the mapping, use the <strong>Actions menu on the Integration Health Dashboard</strong> to manually re-push. This re-queues the rows in <code>partner_deduction_notification</code> and fires fresh Payroll Deduction calls with the corrected codes.</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- SECTION 5 -->
+<div class="section" id="s5">
+  <div class="sec-label"><div class="sec-badge bg-green">5</div><span class="sec-eyebrow">Summary &middot; The Full Sync Lifecycle</span></div>
+  <h2>Putting It All Together</h2>
+  <p class="lead">Here's how every piece works together across the full lifecycle of an active payroll integration — from initial setup through everyday real-time sync.</p>
+
+  <h3 style="font-family:'Playfair Display',serif;font-size:19px;color:var(--navy);margin:0 0 16px;">The Complete Two-Way Flow</h3>
+
+  <div class="flow">
+    <div class="frow">
+      <div class="ficol"><div class="ficon fi-t">&#128299;</div><div class="fline"></div></div>
+      <div class="fbody">
+        <div class="fwho">One-Time Setup</div>
+        <div class="ftitle">Connection established, audits completed</div>
+        <div class="fdesc">Broker/HR connects EN to the partner. Partner maps the Client Identifier and enables webhooks. EN analyst calls <span class="ep ep-get">Get Employee</span> for all employees during the Demographic Audit to reconcile initial state, then verifies mapped codes and fires <span class="ep ep-post">Payroll Deduction</span> calls during the Deduction Audit before going live.</div>
+      </div>
+    </div>
+    <div class="frow">
+      <div class="ficol"><div class="ficon fi-t">&#128424;</div><div class="fline"></div></div>
+      <div class="fbody">
+        <div class="fwho">Ongoing &middot; Inbound</div>
+        <div class="ftitle">Partner &rarr; EN: Thin webhook + Get Employee</div>
+        <div class="fdesc">Any change in the partner system (new hire, address, compensation, termination) &rarr; partner fires thin webhook &rarr; EN calls <span class="ep ep-get">Get Employee</span> &rarr; EN evaluates for PII conflicts and identifier issues &rarr; EN updates the employee record. Completes within ~45–60 seconds.</div>
+      </div>
+    </div>
+    <div class="frow">
+      <div class="ficol"><div class="ficon fi-a">&#128228;</div><div class="fline"></div></div>
+      <div class="fbody">
+        <div class="fwho">Ongoing &middot; Outbound Demographics</div>
+        <div class="ftitle">EN &rarr; Partner: Update Employee on any demographic change</div>
+        <div class="fdesc">Any demographic field change saved in EN &rarr; EN calls <span class="ep ep-post">Update Employee</span> on the partner with only the changed fields. Bi-directional for name, address, DOB, sex, phone, email. Real-time, ~45–60 seconds.</div>
+      </div>
+    </div>
+    <div class="frow">
+      <div class="ficol"><div class="ficon fi-a">&#128184;</div><div class="fline"></div></div>
+      <div class="fbody">
+        <div class="fwho">Ongoing &middot; Outbound Deductions</div>
+        <div class="ftitle">EN &rarr; Partner: Payroll Deduction &amp; Payroll Employer Contribution on benefit events</div>
+        <div class="fdesc">Any enrollment, QLE, rate change, or termination in EN &rarr; EN queues the row in <code>partner_deduction_notification</code> &rarr; push job fires <span class="ep ep-post">Payroll Deduction</span> and/or <span class="ep ep-post">Payroll Employer Contribution</span> with the deduction code, per-pay amount, and start/end date.</div>
+      </div>
+    </div>
+    <div class="frow">
+      <div class="ficol"><div class="ficon fi-g">&#128197;</div><div class="fline"></div></div>
+      <div class="fbody">
+        <div class="fwho">Annual &middot; Open Enrollment</div>
+        <div class="ftitle">Bulk Payroll Deduction push on the Send Deductions Date</div>
+        <div class="fdesc">On the broker's elected date (early AM EST), EN transmits a comprehensive batch: <strong>new Payroll Deduction calls</strong> for new plans, <strong>updated amounts</strong> for renewing employees, <strong>end-dated calls</strong> for dropped coverage, and <strong>old code end + new code start</strong> when codes changed at OE.</div>
+      </div>
+    </div>
+    <div class="frow">
+      <div class="ficol"><div class="ficon fi-n">&#128202;</div></div>
+      <div class="fbody">
+        <div class="fwho">Ongoing &middot; Monitoring</div>
+        <div class="ftitle">Integration Health Dashboard tracks every call</div>
+        <div class="fdesc"><strong>In Sync</strong> = transmitted successfully. <strong>Needs Action</strong> = a Get Employee, Update Employee, Payroll Deduction, or Payroll Employer Contribution call failed — requires analyst review (bad code, PII conflict, partner API issue). <strong>We're On It</strong> = EN detected a transient error and is automatically retrying.</div>
+      </div>
+    </div>
+  </div>
+
+  <h3 style="font-family:'Playfair Display',serif;font-size:19px;color:var(--navy);margin:28px 0 16px;">Quick Reference — Who Owns What</h3>
+  <div class="sum-grid">
+    <div class="sum-card"><div class="sum-icon">&#127970;</div><h4>Payroll Owns</h4><p>New hires, terminations, compensation, pay dates, deduction codes, cost centers</p></div>
+    <div class="sum-card"><div class="sum-icon">&#129517;</div><h4>EN Owns</h4><p>Benefit enrollments, deduction amounts, employer contributions, plan effective dates</p></div>
+    <div class="sum-card"><div class="sum-icon">&#8596;&#65039;</div><h4>Shared (Bi-directional)</h4><p>Name, address, DOB, sex, phone, email — either system can update, real-time sync both ways</p></div>
+    <div class="sum-card"><div class="sum-icon">&#128683;</div><h4>NOT Transmitted</h4><p>Retroactive deductions, ER contributions for Group Life / AD&amp;D / HSA, retirement / 401(k), percentage-based amounts</p></div>
+    <div class="sum-card"><div class="sum-icon">&#9889;</div><h4>Real-Time Calls</h4><p>Get Employee, Update Employee, Payroll Deduction, Payroll Employer Contribution — all ~45–60 seconds</p></div>
+    <div class="sum-card"><div class="sum-icon">&#128197;</div><h4>Scheduled</h4><p>OE bulk Payroll Deduction push — early AM on the broker's chosen Send Deductions Date</p></div>
+  </div>
+
+  <div class="kc">
+    <div class="kc-head"><div class="kc-badge">Knowledge Check</div><div class="kc-title">The Full Picture</div></div>
+    <div class="qblock">
+      <div class="qtext">1. A broker says an employee's address was updated in EN three days ago but still doesn't match in payroll. What's your first step?</div>
+      <div class="opts" id="q11">
+        <button class="opt" onclick="answer('q11',this,false)"><div class="oletter">A</div><div class="otext">Update Employee only runs during Open Enrollment — the address will sync on the Send Deductions Date</div></button>
+        <button class="opt" onclick="answer('q11',this,false)"><div class="oletter">B</div><div class="otext">EN never pushes addresses outbound — the partner must call Get Employee manually</div></button>
+        <button class="opt" onclick="answer('q11',this,true)"><div class="oletter">C</div><div class="otext">Check the Integration Health Dashboard for a Needs Action on Demographics — the Update Employee call likely failed due to a PII conflict, a partner API outage, or the demographic integration not being fully live</div></button>
+        <button class="opt" onclick="answer('q11',this,false)"><div class="oletter">D</div><div class="otext">Demographic updates require the broker to manually export and import a file to payroll</div></button>
+      </div>
+      <div class="fb ok" id="q11-fb"><strong>Correct!</strong> Update Employee calls are real-time — if the address hasn't synced after three days, something blocked it. The Integration Health Dashboard is always your first stop. Look for a Needs Action on Demographics for that employee. Common causes: a PII conflict that prevented the write, a partner API outage, or only the deduction integration being live (not demographics yet).</div>
+    </div>
+    <div class="qblock">
+      <div class="qtext">2. Which of the following correctly describes the full flow when a new hire is added in Paychex?</div>
+      <div class="opts" id="q12">
+        <button class="opt" onclick="answer('q12',this,false)"><div class="oletter">A</div><div class="otext">EN polls Paychex every 5 minutes and detects the new hire automatically</div></button>
+        <button class="opt" onclick="answer('q12',this,false)"><div class="oletter">B</div><div class="otext">The broker manually imports the new hire from a CSV file into EN</div></button>
+        <button class="opt" onclick="answer('q12',this,true)"><div class="oletter">C</div><div class="otext">Paychex fires a thin webhook to EN &rarr; EN calls Get Employee to retrieve the full profile &rarr; EN creates the employee record &rarr; HR is alerted in EN to complete missing required fields</div></button>
+        <button class="opt" onclick="answer('q12',this,false)"><div class="oletter">D</div><div class="otext">EN sends an Update Employee call to Paychex to register the new hire</div></button>
+      </div>
+      <div class="fb ok" id="q12-fb"><strong>Correct!</strong> The full flow: Paychex fires a thin webhook &rarr; EN calls Get Employee &rarr; EN creates the employee &rarr; HR admin is alerted on the EN Homepage under "Complete Employees Missing HR Required Fields." Fully automated, no polling.</div>
+    </div>
+    <div class="qblock">
+      <div class="qtext">3. During Open Enrollment, which types of Payroll Deduction calls does EN send on the Send Deductions Date?</div>
+      <div class="opts" id="q13">
+        <button class="opt" onclick="answer('q13',this,false)"><div class="oletter">A</div><div class="otext">Only new enrollments for employees who are newly added to a plan</div></button>
+        <button class="opt" onclick="answer('q13',this,false)"><div class="oletter">B</div><div class="otext">Only employees whose deduction amounts changed from the prior year</div></button>
+        <button class="opt" onclick="answer('q13',this,true)"><div class="oletter">C</div><div class="otext">New deductions for new enrollments, updated amounts for renewals, end-dated calls for dropped coverage, and old code end + new code start when codes changed</div></button>
+        <button class="opt" onclick="answer('q13',this,false)"><div class="oletter">D</div><div class="otext">Only Payroll Employer Contribution calls — employee deductions are handled individually throughout the year</div></button>
+      </div>
+      <div class="fb ok" id="q13-fb"><strong>Correct!</strong> The OE bulk push is comprehensive — EN sends Payroll Deduction calls covering all four scenarios: brand new enrollments, renewed enrollments with updated amounts, dropped coverage (end-dated), and plans where the deduction code itself changed (old code end-dated, new code started). This is the highest-volume transmission event of the year.</div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<footer>
+  <p><strong>Employee Navigator</strong> &middot; Payroll Analyst Training Guide &middot; For internal use only</p>
+  <p style="margin-top:6px;">Based on EN engineering documentation, partner implementation guides, and internal product specs. Questions? <strong>Payroll@employeenavigator.com</strong></p>
+</footer>
+
+<script>
+(function() {
+  var sections = document.querySelectorAll('.section');
+  var sectionIds = ['s1','s2','s3','s4','s5'];
+  var tocItems = document.querySelectorAll('.toc-item');
+
+  function updateProgress() {
+    var visible = 0;
+    sections.forEach(function(s) { if (s.classList.contains('visible')) visible++; });
+    var pct = Math.min(100, Math.round((visible / sections.length) * 100));
+    document.getElementById('pbarFill').style.width = pct + '%';
+    document.getElementById('pbarCount').textContent = visible + ' / ' + sections.length + ' sections';
+  }
+
+  function revealVisible() {
+    sections.forEach(function(s) {
+      var rect = s.getBoundingClientRect();
+      if (rect.top < window.innerHeight * 0.94) {
+        s.classList.add('visible');
+      }
+    });
+    updateProgress();
+  }
+
+  revealVisible();
+  window.addEventListener('scroll', revealVisible);
+  window.addEventListener('load', revealVisible);
+
+  window.jumpTo = function(id) {
+    var el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  window.addEventListener('scroll', function() {
+    var current = 's1';
+    sectionIds.forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el && window.scrollY >= el.offsetTop - 120) current = id;
+    });
+    tocItems.forEach(function(item, i) {
+      item.classList.toggle('active', sectionIds[i] === current);
+    });
+  });
+
+  var wrongFeedbacks = {
+    'q1-fb': '<strong>Not quite.</strong> The thin webhook + Get Employee pattern is real-time. Paylocity fires a notification the moment the change happens, and EN calls Get Employee to fetch the full record within ~45–60 seconds.',
+    'q2-fb': '<strong>Not quite.</strong> PII mismatches (SSN, name, DOB) are always <strong>blocked and flagged</strong> for analyst review. EN never silently overwrites sensitive identity fields.',
+    'q3-fb': '<strong>Not quite.</strong> Get Employee guarantees EN receives the <em>complete, current</em> record — not just a partial snapshot of what changed at that moment.',
+    'q4-fb': '<strong>Not quite.</strong> A null <code>processed_date</code> means the row is <strong>pending</strong> — queued and waiting for the push job to pick it up and transmit it.',
+    'q5-fb': '<strong>Not quite.</strong> The table is a <strong>boolean switch</strong> — one row per endpoint type. EN only needs "push needed: yes or no" right now, so it overwrites. History lives in <code>partner_deduction_notification</code>.',
+    'q6-fb': '<strong>Not quite.</strong> EN calls Update Employee in real-time with only the changed fields — within ~45–60 seconds of the edit being saved. It does not wait for an audit or OE.',
+    'q7-fb': '<strong>Not quite.</strong> The most likely cause is a missing Payroll ID. Without it, EN has no identifier to include in Update Employee or Payroll Deduction calls. Assign the Payroll ID in EN and re-push.',
+    'q8-fb': '<strong>Not quite.</strong> QLE enrollments trigger a <strong>real-time</strong> Payroll Deduction call — queued and transmitted immediately, no analyst action needed.',
+    'q9-fb': '<strong>Not quite.</strong> Employer HSA contributions are a <strong>known exception</strong>. EN will not send a Payroll Employer Contribution call for HSA employer funds. The employee\'s HSA deduction still transmits via Payroll Deduction.',
+    'q10-fb': '<strong>Not quite.</strong> Correcting the code does not auto-trigger a re-push. Use the <strong>Actions menu on the Integration Health Dashboard</strong> to manually re-push, which fires a new Payroll Deduction call with the corrected code.',
+    'q11-fb': '<strong>Not quite.</strong> Update Employee calls are real-time. A three-day delay means something blocked it. Check the <strong>Integration Health Dashboard</strong> for a Needs Action on Demographics for that employee.',
+    'q12-fb': '<strong>Not quite.</strong> The correct flow: Paychex fires a thin webhook &rarr; EN calls Get Employee &rarr; EN creates the record &rarr; HR is alerted in EN. No polling, no manual imports.',
+    'q13-fb': '<strong>Not quite.</strong> The OE bulk push covers all four scenarios: new enrollments, updated amounts for renewals, end-dated calls for dropped coverage, and old code end + new code start when codes changed.'
+  };
+
+  window.answer = function(qid, btn, correct) {
+    var container = document.getElementById(qid);
+    var buttons = container.querySelectorAll('.opt');
+    buttons.forEach(function(b) {
+      b.classList.remove('correct', 'wrong');
+      if (b !== btn) b.classList.add('dimmed');
+    });
+    btn.classList.add(correct ? 'correct' : 'wrong');
+
+    var fb = document.getElementById(qid + '-fb');
+    if (!fb) return;
+    fb.classList.add('show');
+
+    if (!correct) {
+      fb.classList.add('bad');
+      fb.classList.remove('ok');
+      buttons.forEach(function(b) {
+        if (!b.classList.contains('wrong') && !b.classList.contains('dimmed')) {
+          b.classList.remove('dimmed');
+          b.classList.add('correct');
+        }
+      });
+      if (wrongFeedbacks[qid + '-fb']) fb.innerHTML = wrongFeedbacks[qid + '-fb'];
+    } else {
+      fb.classList.add('ok');
+      fb.classList.remove('bad');
+    }
+  };
+})();
+</script>
+</body>
+</html>
