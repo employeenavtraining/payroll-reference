@@ -1,0 +1,1826 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EN Support Training: Payroll Change Not Updating</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --en-blue: #1a56db;
+    --en-blue-light: #e8f0fe;
+    --en-green: #057a55;
+    --en-green-light: #def7ec;
+    --en-yellow: #c27803;
+    --en-yellow-light: #fdf6b2;
+    --en-red: #c81e1e;
+    --en-red-light: #fde8e8;
+    --en-gray: #374151;
+    --en-gray-light: #f9fafb;
+    --en-border: #e5e7eb;
+    --bg: #f3f4f6;
+    --white: #ffffff;
+    --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.08), 0 2px 4px -1px rgba(0,0,0,0.04);
+    --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.08), 0 4px 6px -2px rgba(0,0,0,0.04);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--en-gray);
+    min-height: 100vh;
+  }
+
+  /* ── Training Header ── */
+  .training-banner {
+    background: linear-gradient(135deg, #1e3a5f 0%, #1a56db 100%);
+    color: white;
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  }
+  .training-banner h1 {
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .training-banner .badge {
+    background: rgba(255,255,255,0.2);
+    border: 1px solid rgba(255,255,255,0.3);
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .progress-bar-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    color: rgba(255,255,255,0.8);
+  }
+  .progress-bar {
+    width: 160px;
+    height: 6px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: #34d399;
+    border-radius: 999px;
+    transition: width 0.5s ease;
+  }
+
+  /* ── Scenario Setup ── */
+  .scenario-panel {
+    background: white;
+    border-bottom: 2px solid var(--en-border);
+    padding: 18px 32px;
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+  }
+  .scenario-icon {
+    width: 44px;
+    height: 44px;
+    background: var(--en-yellow-light);
+    border: 2px solid #f6c640;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+  .scenario-text h2 {
+    font-size: 15px;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 4px;
+  }
+  .scenario-text p {
+    font-size: 13px;
+    color: #6b7280;
+    line-height: 1.5;
+  }
+  .scenario-text strong { color: #1f2937; }
+
+  /* ── Layout ── */
+  .main-layout {
+    display: grid;
+    grid-template-columns: 340px 1fr;
+    gap: 0;
+    min-height: calc(100vh - 120px);
+  }
+
+  /* ── Steps Sidebar ── */
+  .steps-sidebar {
+    background: white;
+    border-right: 1px solid var(--en-border);
+    padding: 20px 0;
+    overflow-y: auto;
+    position: sticky;
+    top: 0;
+    height: calc(100vh - 120px);
+  }
+  .steps-sidebar h3 {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #9ca3af;
+    padding: 0 20px 12px;
+    border-bottom: 1px solid var(--en-border);
+    margin-bottom: 8px;
+  }
+
+  .step-item {
+    padding: 12px 20px;
+    cursor: pointer;
+    border-left: 3px solid transparent;
+    transition: all 0.18s ease;
+    position: relative;
+  }
+  .step-item:hover { background: var(--en-gray-light); }
+  .step-item.active {
+    background: var(--en-blue-light);
+    border-left-color: var(--en-blue);
+  }
+  .step-item.completed { opacity: 0.7; }
+  .step-item.completed .step-num { background: var(--en-green); }
+
+  .step-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .step-num {
+    width: 22px;
+    height: 22px;
+    background: #9ca3af;
+    color: white;
+    border-radius: 50%;
+    font-size: 11px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+    transition: background 0.2s;
+  }
+  .step-item.active .step-num { background: var(--en-blue); }
+  .step-num.check::after { content: '✓'; }
+
+  .step-label {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #374151;
+    line-height: 1.4;
+  }
+  .step-item.active .step-label { color: var(--en-blue); }
+  .step-sublabel {
+    font-size: 11px;
+    color: #9ca3af;
+    margin-top: 2px;
+    padding-left: 32px;
+  }
+
+  .step-connector {
+    width: 2px;
+    height: 12px;
+    background: #e5e7eb;
+    margin: 0 20px 0 30px;
+  }
+  .step-connector.done { background: var(--en-green); }
+
+  /* ── Main Content ── */
+  .main-content {
+    padding: 28px 32px;
+    overflow-y: auto;
+  }
+
+  /* ── Screen/Panel ── */
+  .screen {
+    display: none;
+    animation: fadeIn 0.3s ease;
+  }
+  .screen.active { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .screen-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 6px;
+  }
+  .screen-subtitle {
+    font-size: 13px;
+    color: #6b7280;
+    margin-bottom: 22px;
+    line-height: 1.5;
+  }
+
+  /* ── EN-like UI Mockups ── */
+  .en-window {
+    background: white;
+    border: 1px solid var(--en-border);
+    border-radius: 10px;
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+    margin-bottom: 20px;
+  }
+  .en-topnav {
+    background: #1a1a2e;
+    padding: 0 20px;
+    display: flex;
+    align-items: center;
+    gap: 0;
+    height: 42px;
+  }
+  .en-logo {
+    font-size: 13px;
+    font-weight: 800;
+    color: white;
+    margin-right: 24px;
+    letter-spacing: -0.5px;
+  }
+  .en-logo span { color: #ef4444; }
+  .en-nav-items {
+    display: flex;
+    gap: 0;
+    height: 100%;
+  }
+  .en-nav-item {
+    padding: 0 14px;
+    font-size: 12px;
+    color: rgba(255,255,255,0.7);
+    display: flex;
+    align-items: center;
+    height: 100%;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .en-nav-item:hover { color: white; }
+  .en-nav-item.active {
+    color: white;
+    border-bottom-color: #f97316;
+    font-weight: 600;
+  }
+
+  .en-body { display: flex; min-height: 360px; }
+  .en-sidebar {
+    width: 210px;
+    border-right: 1px solid var(--en-border);
+    padding: 14px 0;
+    flex-shrink: 0;
+    background: #fafafa;
+  }
+  .en-sidebar-section {
+    padding: 0 14px;
+    margin-bottom: 10px;
+  }
+  .en-sidebar-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: #374151;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4px 0 8px;
+    border-bottom: 1px solid var(--en-border);
+    margin-bottom: 6px;
+  }
+  .en-sidebar-link {
+    display: block;
+    padding: 5px 8px;
+    font-size: 12px;
+    color: #6b7280;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.12s;
+  }
+  .en-sidebar-link:hover { background: var(--en-blue-light); color: var(--en-blue); }
+  .en-sidebar-link.active { color: var(--en-blue); font-weight: 600; }
+  .en-sidebar-link.active::before { content: '→ '; }
+
+  .en-main { flex: 1; padding: 20px; }
+  .en-page-title { font-size: 18px; font-weight: 700; color: #111827; margin-bottom: 16px; }
+
+  /* Integration Health Cards */
+  .health-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .health-card {
+    border: 1.5px solid var(--en-border);
+    border-radius: 8px;
+    padding: 16px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+  }
+  .health-card:hover { border-color: var(--en-blue); box-shadow: var(--shadow); }
+  .health-card.clickable-hint::after {
+    content: 'Click to explore';
+    position: absolute;
+    bottom: 4px;
+    right: 8px;
+    font-size: 9px;
+    color: var(--en-blue);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .health-card.clickable-hint:hover::after { opacity: 1; }
+  .health-card-label { font-size: 12px; color: #6b7280; margin-bottom: 8px; font-weight: 500; }
+  .health-card-num { font-size: 28px; font-weight: 700; }
+  .health-card-num.green { color: #057a55; }
+  .health-card-num.yellow { color: #c27803; }
+  .health-card-num.blue { color: #1a56db; }
+
+  /* Transmission Table */
+  .en-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .en-table th {
+    background: #f9fafb;
+    border-bottom: 2px solid var(--en-border);
+    padding: 8px 10px;
+    text-align: left;
+    font-weight: 600;
+    color: #374151;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .en-table td {
+    padding: 9px 10px;
+    border-bottom: 1px solid #f0f0f0;
+    vertical-align: middle;
+  }
+  .en-table tr:hover td { background: #f9fafb; }
+  .en-table tr.highlight-row td { background: #fef9c3 !important; }
+
+  .status-badge {
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    display: inline-block;
+  }
+  .status-success { background: var(--en-green-light); color: var(--en-green); }
+  .status-failed { background: var(--en-red-light); color: var(--en-red); }
+  .status-woi { background: #ede9fe; color: #5b21b6; }
+  .status-na { background: var(--en-yellow-light); color: var(--en-yellow); }
+  .status-insync { background: var(--en-green-light); color: var(--en-green); }
+
+  .en-link { color: var(--en-blue); text-decoration: none; font-weight: 500; cursor: pointer; }
+  .en-link:hover { text-decoration: underline; }
+
+  /* Blocked section */
+  .stat-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 13px;
+  }
+  .stat-badge {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+  }
+  .stat-blue { background: var(--en-blue); color: white; }
+  .stat-dark { background: #374151; color: white; }
+  .stat-orange { background: #f97316; color: white; }
+
+  /* ── Decision / Quiz ── */
+  .decision-box {
+    background: white;
+    border: 1px solid var(--en-border);
+    border-radius: 10px;
+    padding: 22px;
+    margin-bottom: 18px;
+    box-shadow: var(--shadow);
+  }
+  .decision-box h3 {
+    font-size: 14px;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .decision-box h3 .q-icon {
+    width: 26px;
+    height: 26px;
+    background: var(--en-blue);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+
+  .option-btns { display: flex; flex-direction: column; gap: 8px; }
+  .option-btn {
+    padding: 11px 16px;
+    border: 1.5px solid var(--en-border);
+    border-radius: 8px;
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    cursor: pointer;
+    text-align: left;
+    background: white;
+    transition: all 0.18s;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #374151;
+  }
+  .option-btn:hover { border-color: var(--en-blue); color: var(--en-blue); background: var(--en-blue-light); }
+  .option-btn.correct { border-color: var(--en-green); background: var(--en-green-light); color: var(--en-green); }
+  .option-btn.incorrect { border-color: var(--en-red); background: var(--en-red-light); color: var(--en-red); }
+  .option-btn.selected { pointer-events: none; }
+  .option-btn.dimmed { opacity: 0.45; pointer-events: none; }
+  .option-btn .opt-icon { font-size: 16px; }
+
+  /* Feedback bubble */
+  .feedback-box {
+    display: none;
+    padding: 14px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    margin-top: 12px;
+    line-height: 1.6;
+    border-left: 4px solid;
+  }
+  .feedback-box.show { display: block; animation: fadeIn 0.3s ease; }
+  .feedback-correct { background: var(--en-green-light); border-color: var(--en-green); color: #065f46; }
+  .feedback-incorrect { background: var(--en-red-light); border-color: var(--en-red); color: #7f1d1d; }
+  .feedback-info { background: var(--en-blue-light); border-color: var(--en-blue); color: #1e3a5f; }
+
+  /* ── Action / Instruction Cards ── */
+  .action-card {
+    background: white;
+    border: 1px solid var(--en-border);
+    border-radius: 10px;
+    padding: 18px;
+    margin-bottom: 14px;
+    box-shadow: var(--shadow);
+  }
+  .action-card-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .action-steps { list-style: none; }
+  .action-steps li {
+    padding: 6px 0 6px 20px;
+    font-size: 13px;
+    line-height: 1.5;
+    position: relative;
+    color: #374151;
+    border-bottom: 1px solid #f3f4f6;
+  }
+  .action-steps li:last-child { border-bottom: none; }
+  .action-steps li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--en-blue);
+    font-weight: 700;
+  }
+
+  .info-callout {
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 12.5px;
+    color: #1e40af;
+    margin-bottom: 14px;
+    line-height: 1.5;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+  .info-callout .icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+
+  .warn-callout {
+    background: var(--en-yellow-light);
+    border: 1px solid #fcd34d;
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 12.5px;
+    color: #78350f;
+    margin-bottom: 14px;
+    line-height: 1.5;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  /* ── Nav Buttons ── */
+  .nav-btns {
+    display: flex;
+    gap: 10px;
+    margin-top: 24px;
+    padding-top: 18px;
+    border-top: 1px solid var(--en-border);
+  }
+  .btn-primary {
+    background: var(--en-blue);
+    color: white;
+    border: none;
+    padding: 10px 22px;
+    border-radius: 7px;
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.18s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn-primary:hover { background: #1648c0; transform: translateY(-1px); box-shadow: var(--shadow-md); }
+  .btn-primary:disabled { background: #9ca3af; cursor: not-allowed; transform: none; box-shadow: none; }
+  .btn-secondary {
+    background: white;
+    color: var(--en-gray);
+    border: 1.5px solid var(--en-border);
+    padding: 10px 18px;
+    border-radius: 7px;
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.18s;
+  }
+  .btn-secondary:hover { background: var(--en-gray-light); border-color: #9ca3af; }
+
+  /* ── Tooltip / Annotation ── */
+  .annotation {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: #1a56db;
+    color: white;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 999px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    vertical-align: middle;
+    margin-left: 6px;
+  }
+  .annotation.look { background: #f97316; }
+  .annotation.action { background: #057a55; }
+
+  /* Summary screen */
+  .summary-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+  .summary-card {
+    background: white;
+    border: 1px solid var(--en-border);
+    border-radius: 10px;
+    padding: 16px;
+    box-shadow: var(--shadow);
+  }
+  .summary-card h4 {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: #9ca3af;
+    margin-bottom: 10px;
+  }
+  .summary-card ul { list-style: none; }
+  .summary-card ul li {
+    font-size: 12.5px;
+    padding: 4px 0;
+    color: #374151;
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+  }
+  .summary-card ul li::before { content: '•'; color: var(--en-blue); font-weight: 900; flex-shrink: 0; }
+
+  /* Branch paths */
+  .branch-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 16px;
+  }
+  .branch-card {
+    border: 1.5px solid var(--en-border);
+    border-radius: 10px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .branch-card:hover { border-color: var(--en-blue); box-shadow: var(--shadow-md); }
+  .branch-card.selected { border-color: var(--en-blue); box-shadow: 0 0 0 3px rgba(26,86,219,0.15); }
+  .branch-header {
+    padding: 12px 14px;
+    font-size: 12.5px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .branch-header.blue { background: var(--en-blue-light); color: var(--en-blue); }
+  .branch-header.yellow { background: var(--en-yellow-light); color: var(--en-yellow); }
+  .branch-header.green { background: var(--en-green-light); color: var(--en-green); }
+  .branch-header.red { background: var(--en-red-light); color: var(--en-red); }
+  .branch-body { padding: 12px 14px; font-size: 12px; color: #4b5563; line-height: 1.5; }
+
+  /* Tri-dot actions menu */
+  .actions-menu {
+    position: relative;
+    display: inline-block;
+  }
+  .tri-dot-btn {
+    width: 28px;
+    height: 28px;
+    border: 1px solid var(--en-border);
+    border-radius: 5px;
+    background: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    transition: all 0.15s;
+  }
+  .tri-dot-btn:hover { background: var(--en-gray-light); border-color: #9ca3af; }
+  .dropdown-menu {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 32px;
+    background: white;
+    border: 1px solid var(--en-border);
+    border-radius: 8px;
+    box-shadow: var(--shadow-lg);
+    z-index: 100;
+    min-width: 170px;
+    overflow: hidden;
+  }
+  .dropdown-menu.open { display: block; animation: fadeIn 0.15s ease; }
+  .dropdown-item {
+    padding: 9px 14px;
+    font-size: 12.5px;
+    cursor: pointer;
+    color: #374151;
+    transition: background 0.12s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .dropdown-item:hover { background: var(--en-blue-light); color: var(--en-blue); }
+  .dropdown-item.danger { color: var(--en-red); }
+  .dropdown-item.danger:hover { background: var(--en-red-light); }
+
+  /* Section header */
+  .section-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #9ca3af;
+    margin-bottom: 12px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--en-border);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-label span { flex: 1; }
+
+  /* Score */
+  .score-display {
+    text-align: center;
+    padding: 30px;
+    background: linear-gradient(135deg, #1e3a5f, #1a56db);
+    border-radius: 12px;
+    color: white;
+    margin-bottom: 20px;
+  }
+  .score-display .score-num {
+    font-size: 64px;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .score-display .score-label {
+    font-size: 14px;
+    opacity: 0.8;
+  }
+
+  .filter-bar {
+    background: #f9fafb;
+    border: 1px solid var(--en-border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin-bottom: 14px;
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    flex-wrap: wrap;
+    font-size: 12px;
+    color: #6b7280;
+  }
+  .filter-note {
+    background: var(--en-yellow-light);
+    border: 1px solid #fcd34d;
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 11px;
+    color: #78350f;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  code {
+    font-family: 'DM Mono', monospace;
+    background: #f3f4f6;
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 11.5px;
+    color: #1a56db;
+  }
+</style>
+</head>
+<body>
+
+<!-- Training Banner -->
+<div class="training-banner">
+  <h1>
+    🎓 EN Support Training
+    <span class="badge">Interactive Demo</span>
+  </h1>
+  <div class="progress-bar-wrap">
+    <span id="progressLabel">Step 1 of 7</span>
+    <div class="progress-bar">
+      <div class="progress-fill" id="progressFill" style="width: 14%"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Scenario Setup -->
+<div class="scenario-panel">
+  <div class="scenario-icon">⚠️</div>
+  <div class="scenario-text">
+    <h2>Scenario: Customer's payroll change did not update in Employee Navigator</h2>
+    <p>A customer calls in saying they <strong>made a change in ADP Workforce Now</strong> to an employee's demographic info, but they're not seeing it reflected in Employee Navigator. Walk through the correct troubleshooting steps to diagnose and resolve this.</p>
+  </div>
+</div>
+
+<div class="main-layout">
+  <!-- Steps Sidebar -->
+  <div class="steps-sidebar">
+    <h3>Troubleshooting Steps</h3>
+
+    <div class="step-item active" id="nav-step-1" onclick="goToStep(1)">
+      <div class="step-header">
+        <div class="step-num" id="snum-1">1</div>
+        <div>
+          <div class="step-label">Check Integration Health</div>
+          <div class="step-sublabel">In Sync → Incoming Demographics</div>
+        </div>
+      </div>
+    </div>
+    <div class="step-connector" id="conn-1"></div>
+
+    <div class="step-item" id="nav-step-2" onclick="goToStep(2)">
+      <div class="step-header">
+        <div class="step-num" id="snum-2">2</div>
+        <div>
+          <div class="step-label">Incoming Transmission Found?</div>
+          <div class="step-sublabel">Branch: Yes or No</div>
+        </div>
+      </div>
+    </div>
+    <div class="step-connector" id="conn-2"></div>
+
+    <div class="step-item" id="nav-step-3" onclick="goToStep(3)">
+      <div class="step-header">
+        <div class="step-num" id="snum-3">3</div>
+        <div>
+          <div class="step-label">Branch A: Transmission Failed</div>
+          <div class="step-sublabel">"We're On It" or "Needs Action"</div>
+        </div>
+      </div>
+    </div>
+    <div class="step-connector" id="conn-3"></div>
+
+    <div class="step-item" id="nav-step-4" onclick="goToStep(4)">
+      <div class="step-header">
+        <div class="step-num" id="snum-4">4</div>
+        <div>
+          <div class="step-label">Branch B: No Transmission</div>
+          <div class="step-sublabel">Check Blocked IDs</div>
+        </div>
+      </div>
+    </div>
+    <div class="step-connector" id="conn-4"></div>
+
+    <div class="step-item" id="nav-step-5" onclick="goToStep(5)">
+      <div class="step-header">
+        <div class="step-num" id="snum-5">5</div>
+        <div>
+          <div class="step-label">Was Group in Audit Mode?</div>
+          <div class="step-sublabel">Check Demographics Live date</div>
+        </div>
+      </div>
+    </div>
+    <div class="step-connector" id="conn-5"></div>
+
+    <div class="step-item" id="nav-step-6" onclick="goToStep(6)">
+      <div class="step-header">
+        <div class="step-num" id="snum-6">6</div>
+        <div>
+          <div class="step-label">Knowledge Check</div>
+          <div class="step-sublabel">Test your understanding</div>
+        </div>
+      </div>
+    </div>
+    <div class="step-connector" id="conn-6"></div>
+
+    <div class="step-item" id="nav-step-7" onclick="goToStep(7)">
+      <div class="step-header">
+        <div class="step-num" id="snum-7">7</div>
+        <div>
+          <div class="step-label">Summary & Resolution Guide</div>
+          <div class="step-sublabel">Full flowchart</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+
+    <!-- ───────── STEP 1 ───────── -->
+    <div class="screen active" id="screen-1">
+      <div class="screen-title">Step 1: Check the Integration Health Dashboard</div>
+      <div class="screen-subtitle">Your first move is to open the Payroll Dashboard and go into the <strong>Integration Health</strong> section. Click into the <strong>"In Sync"</strong> bucket and search for the employee — you're looking for an "Incoming Demographics" row to see if and when a change notification was received from the partner.</div>
+
+      <div class="info-callout">
+        <div class="icon">💡</div>
+        <div><strong>Why the "In Sync" bucket?</strong> Even successfully processed incoming changes appear here under "In Sync" — so you can confirm the partner did send EN a notification and that it was pulled in. If the partner sent a change that later failed, it would appear in "Needs Action" or "We're On It" instead.</div>
+      </div>
+
+      <!-- EN Window Mockup: Payroll Dashboard -->
+      <div class="en-window">
+        <div class="en-topnav">
+          <div class="en-logo"><span>not</span>real</div>
+          <div class="en-nav-items">
+            <div class="en-nav-item">Home</div>
+            <div class="en-nav-item">Employees</div>
+            <div class="en-nav-item">Reports</div>
+            <div class="en-nav-item active">Payroll</div>
+            <div class="en-nav-item">Documents</div>
+            <div class="en-nav-item">Settings</div>
+          </div>
+        </div>
+        <div class="en-body">
+          <div class="en-sidebar">
+            <div class="en-sidebar-section">
+              <div class="en-sidebar-title">Payroll ▾</div>
+              <a class="en-sidebar-link active">Dashboard</a>
+              <a class="en-sidebar-link">Integrations</a>
+            </div>
+            <div class="en-sidebar-section">
+              <div class="en-sidebar-title">Reports ▾</div>
+              <a class="en-sidebar-link">OE Scheduled Deductions</a>
+              <a class="en-sidebar-link">Retroactive Deductions</a>
+              <a class="en-sidebar-link">API Import Transmissions</a>
+              <a class="en-sidebar-link">Payroll Deduction Listing</a>
+            </div>
+          </div>
+          <div class="en-main">
+            <div class="en-page-title">Payroll Dashboard</div>
+            <div style="font-size:13px;font-weight:600;color:#374151;margin-bottom:10px;">Integration Health <span style="font-size:11px;background:#e8f0fe;color:#1a56db;padding:1px 6px;border-radius:4px;margin-left:4px;font-weight:400;">ℹ</span></div>
+            <div class="health-cards">
+              <div class="health-card clickable-hint" onclick="showInSyncDrilldown()" style="border-color:#057a55;box-shadow:0 0 0 2px rgba(5,122,85,0.15);">
+                <div class="health-card-label">In Sync</div>
+                <div class="health-card-num green">327</div>
+                <div style="font-size:10px;color:#057a55;margin-top:6px;font-weight:600;">▶ Click to explore</div>
+              </div>
+              <div class="health-card">
+                <div class="health-card-label">Needs Action</div>
+                <div class="health-card-num yellow">0</div>
+              </div>
+              <div class="health-card">
+                <div class="health-card-label">We're On It</div>
+                <div class="health-card-num blue">0</div>
+              </div>
+            </div>
+            <div id="insync-drilldown" style="display:none;">
+              <div style="background:#f0fdf4;border:1px solid #6ee7b7;border-radius:8px;padding:12px 14px;font-size:12px;color:#065f46;margin-bottom:10px;">
+                ✅ You clicked into <strong>In Sync</strong>. This opens the Employee Sync Status view filtered to "In Sync." From here, search for the employee by name to check if an Incoming Demographics row exists for them.
+              </div>
+              <!-- In Sync detail table -->
+              <div style="font-size:12px;font-weight:600;color:#374151;margin-bottom:8px;">Employee Sync Status — In Sync <span style="font-weight:400;color:#9ca3af;font-size:11px;">(327 unique employees)</span></div>
+              <div style="display:flex;gap:8px;margin-bottom:10px;align-items:center;">
+                <input type="text" id="insync-search" placeholder="Search by employee name..." oninput="filterInSyncTable(this.value)"
+                  style="border:1px solid var(--en-border);border-radius:6px;padding:6px 10px;font-size:12px;font-family:'DM Sans',sans-serif;width:240px;">
+                <button style="background:var(--en-blue);color:white;border:none;border-radius:6px;padding:6px 12px;font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif;">🔍 Search</button>
+              </div>
+              <div style="overflow-x:auto;">
+                <table class="en-table" id="insync-table">
+                  <thead>
+                    <tr>
+                      <th>Employee</th>
+                      <th>Transmission</th>
+                      <th>Category</th>
+                      <th>Code</th>
+                      <th>Status</th>
+                      <th>Instructions</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="insync-tbody">
+                    <tr class="insync-row" data-name="hoffman">
+                      <td><a class="en-link">Hoffman, Ian</a></td>
+                      <td style="font-size:11px;color:#6b7280;">03/24/2026 5:58:31 PM</td>
+                      <td><strong>Demographics (Inbound)</strong> <span class="annotation look">👀 Found it</span></td>
+                      <td>—</td>
+                      <td><span class="status-badge status-insync">In Sync</span></td>
+                      <td style="font-size:11px;color:#057a55;max-width:200px;">This employee's demographics are in sync.</td>
+                      <td><div class="actions-menu"><button class="tri-dot-btn" onclick="toggleMenu('m-is1')">⋮</button><div class="dropdown-menu" id="m-is1"><div class="dropdown-item">📥 Pull from Payroll</div><div class="dropdown-item">📤 Push to Payroll</div></div></div></td>
+                    </tr>
+                    <tr class="insync-row" data-name="hoffman">
+                      <td><a class="en-link">Hoffman, Ian</a></td>
+                      <td style="font-size:11px;color:#6b7280;">03/24/2026 5:58:00 PM</td>
+                      <td>Demographics (Outbound)</td>
+                      <td>—</td>
+                      <td><span class="status-badge status-insync">In Sync</span></td>
+                      <td style="font-size:11px;color:#057a55;max-width:200px;">This employee's demographics are in sync.</td>
+                      <td><div class="actions-menu"><button class="tri-dot-btn">⋮</button></div></td>
+                    </tr>
+                    <tr class="insync-row" data-name="poepping">
+                      <td><a class="en-link">Poepping, Christopher</a></td>
+                      <td style="font-size:11px;color:#6b7280;">03/23/2026 1:42:45 PM</td>
+                      <td>Demographics (Inbound)</td>
+                      <td>—</td>
+                      <td><span class="status-badge status-insync">In Sync</span></td>
+                      <td style="font-size:11px;color:#057a55;max-width:200px;">This employee's demographics are in sync.</td>
+                      <td><div class="actions-menu"><button class="tri-dot-btn">⋮</button></div></td>
+                    </tr>
+                    <tr class="insync-row" data-name="piccini">
+                      <td><a class="en-link">Piccini Cornejo, Lorenzo</a></td>
+                      <td style="font-size:11px;color:#6b7280;">03/23/2026 1:21:27 PM</td>
+                      <td>Demographics (Inbound)</td>
+                      <td>—</td>
+                      <td><span class="status-badge status-insync">In Sync</span></td>
+                      <td style="font-size:11px;color:#057a55;max-width:200px;">This employee's demographics are in sync.</td>
+                      <td><div class="actions-menu"><button class="tri-dot-btn">⋮</button></div></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div id="insync-found-msg" style="display:none;margin-top:10px;" class="feedback-box feedback-correct show">
+                ✅ <strong>Incoming Demographics row found for Hoffman, Ian</strong> — marked "In Sync." This confirms EN did receive and process a change notification from the partner for this employee. But wait — the customer says the change still isn't showing. This means we need to check whether <em>this particular change</em> came through successfully or if there's a failed one in another bucket.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="warn-callout">
+        <div class="icon">📌</div>
+        <div><strong>Navigation path:</strong> Payroll tab → Dashboard → Integration Health → click the <strong>"In Sync"</strong> number → search the employee's name → look for a <strong>Demographics (Inbound)</strong> row around when the change was made in payroll.</div>
+      </div>
+
+      <div class="nav-btns">
+        <button class="btn-primary" onclick="goToStep(2)">Next: Interpret what we found →</button>
+      </div>
+    </div>
+
+    <!-- ───────── STEP 2 ───────── -->
+    <div class="screen" id="screen-2">
+      <div class="screen-title">Step 2: What do you see in the "In Sync" view for this employee?</div>
+      <div class="screen-subtitle">You've searched for <strong>Hoffman, Ian</strong> in the Integration Health → In Sync bucket. Now interpret what you find. A <strong>Demographics (Inbound)</strong> row tells you whether EN received and processed an incoming change from ADP around the time the customer made their update.</div>
+
+      <!-- Integration Health In Sync mockup -->
+      <div class="en-window">
+        <div style="padding:14px 16px;border-bottom:1px solid var(--en-border);background:#f9fafb;">
+          <div style="font-size:14px;font-weight:700;color:#111827;margin-bottom:6px;">Employee Sync Status — <span style="color:#057a55;">In Sync</span></div>
+          <div style="font-size:11px;color:#6b7280;">Filtered: Employee = "Hoffman, Ian" &nbsp;|&nbsp; Showing all categories</div>
+        </div>
+        <div style="padding:14px 16px;overflow-x:auto;">
+          <table class="en-table">
+            <thead>
+              <tr>
+                <th><input type="checkbox"></th>
+                <th>Employee</th>
+                <th>Transmission</th>
+                <th>Category</th>
+                <th>Code</th>
+                <th>Status</th>
+                <th>Instructions</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="highlight-row">
+                <td><input type="checkbox"></td>
+                <td><a class="en-link">Hoffman, Ian</a></td>
+                <td style="font-size:11px;color:#6b7280;">03/24/2026 5:58:31 PM</td>
+                <td><strong>Demographics (Inbound)</strong> <span class="annotation look">👀 Look here</span></td>
+                <td>—</td>
+                <td><span class="status-badge status-insync">In Sync</span></td>
+                <td style="font-size:11px;color:#057a55;max-width:200px;">This employee's demographics are in sync.</td>
+                <td><div class="actions-menu"><button class="tri-dot-btn" onclick="toggleMenu('m2a')">⋮</button><div class="dropdown-menu" id="m2a"><div class="dropdown-item">📥 Pull from Payroll</div><div class="dropdown-item">📤 Push to Payroll</div></div></div></td>
+              </tr>
+              <tr>
+                <td><input type="checkbox"></td>
+                <td><a class="en-link">Hoffman, Ian</a></td>
+                <td style="font-size:11px;color:#6b7280;">03/24/2026 5:58:00 PM</td>
+                <td>Demographics (Outbound)</td>
+                <td>—</td>
+                <td><span class="status-badge status-insync">In Sync</span></td>
+                <td style="font-size:11px;color:#057a55;max-width:200px;">This employee's demographics are in sync.</td>
+                <td><div class="actions-menu"><button class="tri-dot-btn">⋮</button></div></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="decision-box">
+        <h3><span class="q-icon">?</span> You can see a Demographics (Inbound) row for Ian Hoffman marked "In Sync." What does this tell you?</h3>
+        <div class="option-btns" id="q2-opts">
+          <button class="option-btn" onclick="answerQ2('a')"><span class="opt-icon">✅</span> ADP did send EN a change notification for this employee, and EN successfully processed it — but we should check if this is the right change or if there's a newer failed one in another bucket</button>
+          <button class="option-btn" onclick="answerQ2('b')"><span class="opt-icon">❌</span> There is no incoming demographics transmission — the partner never sent a notification</button>
+          <button class="option-btn" onclick="answerQ2('c')"><span class="opt-icon">🔄</span> The change failed to process — we need to retry it from here</button>
+        </div>
+        <div class="feedback-box feedback-correct" id="q2-feedback-a">
+          ✅ <strong>Correct!</strong> An "In Sync" Demographics (Inbound) row means the partner <em>did</em> send EN a notification and it was pulled in successfully. However, if the customer says the specific change they made isn't showing, we should also check <strong>"Needs Action"</strong> and <strong>"We're On It"</strong> buckets — a more recent failed attempt may live there. If a failed incoming transmission exists, that's the one causing the issue.
+        </div>
+        <div class="feedback-box feedback-incorrect" id="q2-feedback-b">
+          ❌ Actually, the Demographics (Inbound) row <em>is</em> a transmission from the partner to EN. "No transmission" would mean this row doesn't appear at all. Finding it here — even marked "In Sync" — tells us the partner's API is communicating with EN for this employee.
+        </div>
+        <div class="feedback-box feedback-incorrect" id="q2-feedback-c">
+          ❌ This row is marked <strong>"In Sync"</strong> — meaning it processed successfully. A failed change would not appear in this bucket; it would show up in "Needs Action" or "We're On It" instead. Always check all three buckets for the employee.
+        </div>
+      </div>
+
+      <div class="nav-btns">
+        <button class="btn-secondary" onclick="goToStep(1)">← Back</button>
+        <button class="btn-primary" id="btn-step2-next" onclick="goToStep(3)" disabled>Next: What if a change failed? →</button>
+      </div>
+    </div>
+
+    <!-- ───────── STEP 3 ───────── -->
+    <div class="screen" id="screen-3">
+      <div class="screen-title">Step 3 (Branch A): Transmission Failed — Two Possible Outcomes</div>
+      <div class="screen-subtitle">When a failed Incoming Demographics exists, the employee will appear in one of two buckets on the Integration Health dashboard depending on the <em>cause</em> of failure. Explore both branches below.</div>
+
+      <div class="info-callout">
+        <div class="icon">🧭</div>
+        <div>Click each branch tab below to see what the dashboard looks like in each scenario and how to resolve it.</div>
+      </div>
+
+      <!-- Branch tabs -->
+      <div style="display:flex;gap:0;margin-bottom:0;border-bottom:2px solid var(--en-border);">
+        <button id="tab-woi" onclick="switchBranch3('woi')"
+          style="padding:10px 22px;font-size:13px;font-family:'DM Sans',sans-serif;font-weight:700;border:none;border-bottom:3px solid #1a56db;background:var(--en-blue-light);color:var(--en-blue);cursor:pointer;border-radius:8px 8px 0 0;margin-right:4px;transition:all 0.15s;">
+          🔵 Branch 1: "We're On It"
+        </button>
+        <button id="tab-na" onclick="switchBranch3('na')"
+          style="padding:10px 22px;font-size:13px;font-family:'DM Sans',sans-serif;font-weight:600;border:none;border-bottom:3px solid transparent;background:#f9fafb;color:#6b7280;cursor:pointer;border-radius:8px 8px 0 0;margin-right:4px;transition:all 0.15s;">
+          🟡 Branch 2: "Needs Action"
+        </button>
+      </div>
+
+      <!-- ── WE'RE ON IT BRANCH ── -->
+      <div id="branch3-woi" style="padding-top:18px;">
+        <div class="warn-callout" style="background:#ede9fe;border-color:#c4b5fd;">
+          <div class="icon">🔵</div>
+          <div><strong>Cause: Partner API was unavailable or timed out</strong> when EN attempted to retrieve the change. EN received the notification ping from ADP but couldn't grab the data at that moment.</div>
+        </div>
+
+        <div class="en-window">
+          <div style="padding:12px 16px;background:#f9fafb;border-bottom:1px solid var(--en-border);display:flex;align-items:center;gap:10px;">
+            <div style="font-size:13px;font-weight:700;color:#111827;">Employee Sync Status</div>
+            <span style="background:#ede9fe;color:#5b21b6;font-size:11px;font-weight:700;padding:2px 10px;border-radius:999px;">We're On It</span>
+            <span style="font-size:11px;color:#9ca3af;margin-left:auto;">1 unique employee</span>
+          </div>
+          <div style="padding:14px 16px;overflow-x:auto;">
+            <table class="en-table">
+              <thead>
+                <tr>
+                  <th><input type="checkbox"></th>
+                  <th>Employee</th>
+                  <th>Transmission</th>
+                  <th>Category</th>
+                  <th>Code</th>
+                  <th>Status</th>
+                  <th>Instructions</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="highlight-row">
+                  <td><input type="checkbox"></td>
+                  <td><a class="en-link">Hoffman, Ian</a></td>
+                  <td style="font-size:11px;color:#6b7280;">03/24/2026 5:58:00 PM</td>
+                  <td>Demographics (Inbound)</td>
+                  <td>—</td>
+                  <td><span class="status-badge status-woi">We're On It</span></td>
+                  <td style="font-size:11px;color:#5b21b6;max-width:220px;line-height:1.5;">Your payroll partner's API was unavailable to access. We'll retry this change automatically tonight. Use the Actions icon → "Pull from Payroll" if you'd prefer not to wait.</td>
+                  <td>
+                    <div class="actions-menu">
+                      <button class="tri-dot-btn" onclick="toggleMenu('m3-woi')">⋮</button>
+                      <div class="dropdown-menu" id="m3-woi">
+                        <div class="dropdown-item" onclick="showPullConfirm()">📥 Pull from Payroll</div>
+                        <div class="dropdown-item danger">🚫 Ignore this transmission</div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <div id="pull-confirm" style="display:none;margin-top:10px;" class="feedback-box feedback-correct show">
+              ✅ <strong>Pull from Payroll triggered!</strong> EN will now fetch the latest demographics from ADP for Ian Hoffman. The record will move to "In Sync" once complete — typically within a few minutes.
+            </div>
+          </div>
+        </div>
+
+        <div class="action-card">
+          <div class="action-card-title">🔵 How to resolve — "We're On It"</div>
+          <ul class="action-steps">
+            <li>EN received the notification from ADP but the partner's API was down when EN tried to pull the data.</li>
+            <li><strong>Auto-retry:</strong> EN will retry the pull automatically that same night — no customer action needed if they can wait.</li>
+            <li><strong>Manual retry now:</strong> Integration Health → "We're On It" tab → find the employee → tri-dot (⋮) Actions icon → <strong>Pull from Payroll</strong>.</li>
+            <li>Once successful, the employee moves to "In Sync" and the change is visible in EN.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- ── NEEDS ACTION BRANCH ── -->
+      <div id="branch3-na" style="display:none;padding-top:18px;">
+        <div class="warn-callout">
+          <div class="icon">🟡</div>
+          <div><strong>Cause: Bad or missing data on the employee's record</strong> is preventing EN from processing the change — for example, a required field has an invalid value that would affect an enrollment in EN.</div>
+        </div>
+
+        <div class="en-window">
+          <div style="padding:12px 16px;background:#f9fafb;border-bottom:1px solid var(--en-border);display:flex;align-items:center;gap:10px;">
+            <div style="font-size:13px;font-weight:700;color:#111827;">Employee Sync Status</div>
+            <span style="background:var(--en-yellow-light);color:var(--en-yellow);font-size:11px;font-weight:700;padding:2px 10px;border-radius:999px;">Needs Action</span>
+            <span style="font-size:11px;color:#9ca3af;margin-left:auto;">1 unique employee</span>
+          </div>
+          <div style="padding:14px 16px;overflow-x:auto;">
+            <table class="en-table">
+              <thead>
+                <tr>
+                  <th><input type="checkbox"></th>
+                  <th>Employee</th>
+                  <th>Transmission</th>
+                  <th>Category</th>
+                  <th>Code</th>
+                  <th>Status</th>
+                  <th>Instructions</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="highlight-row">
+                  <td><input type="checkbox"></td>
+                  <td><a class="en-link">Hoffman, Ian</a></td>
+                  <td style="font-size:11px;color:#6b7280;">03/24/2026 5:58:00 PM</td>
+                  <td>Demographics (Inbound)</td>
+                  <td>—</td>
+                  <td><span class="status-badge status-na">Needs Action</span></td>
+                  <td style="font-size:11px;max-width:260px;line-height:1.6;">
+                    <div style="background:#fffbeb;border:1px solid #fcd34d;border-radius:6px;padding:8px 10px;color:#78350f;">
+                      <strong>⚠️ Instructions:</strong><br>
+                      This employee's current Salary is listed as 0. To fix this, add a salary value for this employee in ADP with an effective date that equals today's date or prior.
+                    </div>
+                  </td>
+                  <td>
+                    <div class="actions-menu">
+                      <button class="tri-dot-btn" onclick="toggleMenu('m3-na')">⋮</button>
+                      <div class="dropdown-menu" id="m3-na">
+                        <div class="dropdown-item" onclick="showNAIgnoreConfirm()">🚫 Ignore this transmission</div>
+                        <div class="dropdown-item">📥 Pull from Payroll</div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <div id="na-ignore-confirm" style="display:none;margin-top:10px;" class="feedback-box feedback-info show">
+              ℹ️ <strong>Ignore option:</strong> If the customer has already fixed the salary directly in ADP and confirmed the systems are actually in sync, they can use "Ignore this transmission" to move the employee to "In Sync" without re-sending. Otherwise, they should fix the salary first, then EN will process successfully on the next retry.
+            </div>
+          </div>
+        </div>
+
+        <div class="action-card">
+          <div class="action-card-title">🟡 How to resolve — "Needs Action"</div>
+          <ul class="action-steps">
+            <li>The Instructions column shows exactly what's wrong — <strong>no need to call EN Support</strong>.</li>
+            <li>In this example: the employee's salary is 0 in ADP. The customer must <strong>add a valid salary value in ADP</strong> with an effective date of today or earlier.</li>
+            <li>Once fixed in ADP, EN will process the change on the next sync and the employee will move to "In Sync."</li>
+            <li>If the customer already fixed it manually and the systems are already aligned, they can use the tri-dot icon → <strong>Ignore this transmission</strong> to clear it from "Needs Action."</li>
+          </ul>
+        </div>
+
+        <div class="decision-box">
+          <h3><span class="q-icon">?</span> The customer fixed the salary in ADP but doesn't want to wait for the next sync. What do they do?</h3>
+          <div class="option-btns" id="q3-opts">
+            <button class="option-btn" onclick="answerQ3('a')"><span class="opt-icon">📥</span> Go to Integration Health → "Needs Action" → find the employee → tri-dot icon → Pull from Payroll to re-trigger the sync now</button>
+            <button class="option-btn" onclick="answerQ3('b')"><span class="opt-icon">⏳</span> Wait — EN will automatically retry it overnight and there's no way to speed it up</button>
+            <button class="option-btn" onclick="answerQ3('c')"><span class="opt-icon">📞</span> Call EN Support to manually push the record</button>
+          </div>
+          <div class="feedback-box feedback-correct" id="q3-feedback-a">
+            ✅ <strong>Correct!</strong> After fixing the underlying issue in ADP, the customer can immediately trigger a re-sync using the tri-dot Actions icon → <strong>Pull from Payroll</strong>. EN will pull the updated record and the employee should move to "In Sync."
+          </div>
+          <div class="feedback-box feedback-incorrect" id="q3-feedback-b">
+            ❌ The customer doesn't have to wait — the Integration Health dashboard lets them manually retry via the Actions icon. This is one of the key self-service features of the dashboard.
+          </div>
+          <div class="feedback-box feedback-incorrect" id="q3-feedback-c">
+            ❌ No Support call needed. The whole point of the Instructions column and the Actions menu is to let customers self-resolve these issues on their own.
+          </div>
+        </div>
+      </div>
+
+      <div class="nav-btns">
+        <button class="btn-secondary" onclick="goToStep(2)">← Back</button>
+        <button class="btn-primary" onclick="goToStep(4)">Next: What if there's NO transmission? →</button>
+      </div>
+    </div>
+
+    <!-- ───────── STEP 4 ───────── -->
+    <div class="screen" id="screen-4">
+      <div class="screen-title">Step 4 (Branch B): No Incoming Transmission Found — Check Blocked IDs</div>
+      <div class="screen-subtitle">If you checked the Transmissions dashboard and found <em>no</em> Incoming Demographics for this employee around the change date, the partner never notified EN. Now we need to figure out why EN never received it.</div>
+
+      <div class="warn-callout">
+        <div class="icon">⚠️</div>
+        <div>No incoming transmission means the partner's API either never fired a notification, or EN is configured to block this employee's record.</div>
+      </div>
+
+      <div class="section-label"><span>First check: Is this employee's Payroll ID blocked in EN?</span></div>
+
+      <!-- Payroll Dashboard with Employee Stats -->
+      <div class="en-window">
+        <div style="padding:14px 16px;background:#f9fafb;border-bottom:1px solid var(--en-border);">
+          <div style="font-size:13px;font-weight:700;">Integration section → Employee Stats</div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;">
+          <div style="padding:14px 16px;border-right:1px solid var(--en-border);">
+            <div style="font-size:13px;font-weight:600;margin-bottom:10px;color:#374151;">Employee Stats <span style="font-size:11px;background:#e8f0fe;color:#1a56db;padding:1px 6px;border-radius:4px;margin-left:4px;">ℹ</span></div>
+            <div class="stat-row">
+              <span>Connected</span>
+              <div class="stat-badge stat-blue">861</div>
+            </div>
+            <div class="stat-row" style="cursor:pointer;" onclick="showBlockedSection()">
+              <span style="color:var(--en-blue);font-weight:600;">Blocked Demographics <span class="annotation look">Click to check</span></span>
+              <div class="stat-badge stat-orange">1</div>
+            </div>
+            <div class="stat-row">
+              <span>Blocked Deductions</span>
+              <div class="stat-badge stat-dark" style="background:#9ca3af;">0</div>
+            </div>
+          </div>
+          <div style="padding:14px 16px;" id="blocked-section" style="display:none;">
+            <div id="blocked-default" style="color:#9ca3af;font-size:13px;font-style:italic;">Click "Blocked Demographics" to search</div>
+            <div id="blocked-results" style="display:none;">
+              <div style="font-size:12px;font-weight:600;margin-bottom:8px;color:#374151;">Blocked Demographics — Search results</div>
+              <input type="text" id="blocked-search" placeholder="Search by Payroll ID..." 
+                style="width:100%;border:1px solid var(--en-border);border-radius:6px;padding:7px 10px;font-size:12px;margin-bottom:10px;font-family:'DM Sans',sans-serif;"
+                oninput="checkBlockedSearch(this.value)">
+              <div id="blocked-found" style="display:none;" class="feedback-box feedback-incorrect show" style="margin-top:8px;">
+                🚫 <strong>Payroll ID G333QSMS is BLOCKED</strong> — This employee's demographic updates are blocked from processing in EN. The customer will need to unblock this employee's Payroll ID before changes can sync. Go to the employee's profile → Payroll tab → remove/correct the blocked status.
+              </div>
+              <div id="blocked-not-found" style="display:none;" class="feedback-box feedback-info show">
+                ✅ Not found in blocked list — this employee's Payroll ID is <strong>not blocked</strong>. Move on to check if the group was in Audit Mode when the change was made.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="decision-box">
+        <h3><span class="q-icon">?</span> The customer says the employee's Payroll ID is NOT blocked. What's your next check?</h3>
+        <div class="option-btns" id="q4-opts">
+          <button class="option-btn" onclick="answerQ4('a')"><span class="opt-icon">📅</span> Check if the group was still in Audit Mode when the change was made in payroll</button>
+          <button class="option-btn" onclick="answerQ4('b')"><span class="opt-icon">🔁</span> Retry the transmission from the Transmissions dashboard</button>
+          <button class="option-btn" onclick="answerQ4('c')"><span class="opt-icon">📞</span> Escalate immediately to Tier 2</button>
+        </div>
+        <div class="feedback-box feedback-correct" id="q4-feedback-a">
+          ✅ <strong>Correct!</strong> With no blocked ID, the next question is whether this group had gone live with Demographics <em>before</em> the change was made. If the integration was still in Audit Mode at the time, ADP wouldn't have been sending EN live change notifications yet.
+        </div>
+        <div class="feedback-box feedback-incorrect" id="q4-feedback-b">
+          ❌ There's no incoming transmission to retry — that's the whole problem. A retry only applies when a failed transmission exists. Since there's nothing in the logs, we need to investigate why no notification came in.
+        </div>
+        <div class="feedback-box feedback-incorrect" id="q4-feedback-c">
+          ❌ Not yet — we haven't exhausted our troubleshooting steps. Escalation is only appropriate if: (1) no blocked ID, AND (2) the group was already live when the change was made, AND (3) there's still no incoming transmission. That would point to a partner-side issue.
+        </div>
+      </div>
+
+      <div class="nav-btns">
+        <button class="btn-secondary" onclick="goToStep(3)">← Back</button>
+        <button class="btn-primary" id="btn-step4-next" onclick="goToStep(5)" disabled>Next: Check Audit Mode →</button>
+      </div>
+    </div>
+
+    <!-- ───────── STEP 5 ───────── -->
+    <div class="screen" id="screen-5">
+      <div class="screen-title">Step 5: Was the group still in Audit Mode when the change was made?</div>
+      <div class="screen-subtitle">Check the integration's go-live date. If the group's Demographics were not yet "Live" when the change was made in ADP, the partner would not have been sending EN live change notifications.</div>
+
+      <div class="en-window">
+        <div style="padding:14px 16px;background:#f9fafb;border-bottom:1px solid var(--en-border);">
+          <div style="font-size:13px;font-weight:700;">Integration Status — Payroll Dashboard</div>
+        </div>
+        <div style="padding:14px 16px;">
+          <div style="background:#f0fdf4;border:1px solid #6ee7b7;border-radius:8px;padding:12px 14px;font-size:12px;color:#065f46;margin-bottom:14px;">
+            🔗 <strong>Jans Mountain Outfitters</strong> (ADP Workforce Now®)<br>
+            <span style="color:#057a55;font-weight:700;">✅ Demographics &amp; Deductions Live</span> — since <strong>1/29/2020</strong>
+          </div>
+          <div style="font-size:12px;color:#6b7280;line-height:1.6;">
+            In this example, Demographics went live on <strong>1/29/2020</strong>. If the customer's change was made after this date, the group was live. If the change was made <em>before</em> this date, audit mode would explain the missing notification.
+          </div>
+        </div>
+      </div>
+
+      <div class="section-label"><span>Scenarios & Resolutions</span></div>
+
+      <div class="branch-grid">
+        <div class="branch-card">
+          <div class="branch-header yellow">📋 Change was made BEFORE Demographics went Live (Audit Mode)</div>
+          <div class="branch-body">
+            <strong>Option 1 — Employee doesn't exist in EN yet:</strong><br>
+            Use the <code>Force a demographic change</code> macro to create the record in EN.<br><br>
+            <strong>Option 2 — Employee exists in EN:</strong><br>
+            Have the customer go to Integration Health → find the employee's "Incoming Demographics" row → tri-dot icon → <strong>Pull from Payroll</strong> to manually fetch the change.
+          </div>
+        </div>
+        <div class="branch-card">
+          <div class="branch-header red">🌐 Group was LIVE and change was made AFTER go-live date, but still no transmission</div>
+          <div class="branch-body">
+            This points to a <strong>partner-side issue</strong> — ADP/partner did not send EN a change notification.<br><br>
+            <strong>Resolution:</strong> Escalate to <strong>Tier 2</strong> for further investigation. The integration was live, the ID is not blocked, and yet no notification was received — this requires deeper partner troubleshooting.
+          </div>
+        </div>
+      </div>
+
+      <!-- Pull from payroll demo -->
+      <div class="info-callout">
+        <div class="icon">🖱️</div>
+        <div>
+          <strong>How to "Pull from Payroll" in Integration Health:</strong><br>
+          Integration Health → Find the employee's <em>Incoming Demographics</em> row → click the <strong>tri-dot (⋮) Actions icon</strong> → select <strong>"Pull from Payroll"</strong>. EN will go fetch the current data from ADP and update the employee's record.
+        </div>
+      </div>
+
+      <div class="nav-btns">
+        <button class="btn-secondary" onclick="goToStep(4)">← Back</button>
+        <button class="btn-primary" onclick="goToStep(6)">Next: Knowledge Check →</button>
+      </div>
+    </div>
+
+    <!-- ───────── STEP 6 ───────── -->
+    <div class="screen" id="screen-6">
+      <div class="screen-title">Step 6: Knowledge Check</div>
+      <div class="screen-subtitle">Answer all three questions to proceed to the summary. These test the key decision points in this troubleshooting flow.</div>
+
+      <!-- Q1 -->
+      <div class="decision-box">
+        <h3><span class="q-icon">1</span> A customer says a payroll change isn't updating in EN. What's your FIRST action?</h3>
+        <div class="option-btns" id="kq1-opts">
+          <button class="option-btn" onclick="answerKQ(1,'a')"><span class="opt-icon">📞</span> Ask the customer to re-enter the change in ADP</button>
+          <button class="option-btn" onclick="answerKQ(1,'b')"><span class="opt-icon">🔍</span> Check the Transmissions log for a failed Incoming Demographics entry for that employee</button>
+          <button class="option-btn" onclick="answerKQ(1,'c')"><span class="opt-icon">⬆️</span> Escalate to Tier 2 immediately</button>
+          <button class="option-btn" onclick="answerKQ(1,'d')"><span class="opt-icon">🚫</span> Check if the employee's Payroll ID is blocked</button>
+        </div>
+        <div class="feedback-box feedback-correct" id="kq1-feedback-b">✅ <strong>Correct!</strong> Always start at the Transmissions log. It tells you whether EN received a notification from the partner — which is the critical fork in the troubleshooting tree.</div>
+        <div class="feedback-box feedback-incorrect" id="kq1-feedback-a">❌ Re-entering the change may not help if the issue is on EN's side. Start by checking whether EN received a notification first.</div>
+        <div class="feedback-box feedback-incorrect" id="kq1-feedback-c">❌ Tier 2 escalation is the last resort after all other checks fail. Always investigate first.</div>
+        <div class="feedback-box feedback-incorrect" id="kq1-feedback-d">❌ Checking blocked IDs comes only if you find <em>no</em> incoming transmission. Start with the transmission log to determine which path to follow.</div>
+      </div>
+
+      <!-- Q2 -->
+      <div class="decision-box">
+        <h3><span class="q-icon">2</span> You find a failed Incoming Demographics in Transmissions. On the Integration Health dashboard, it appears in "We're On It." What does this mean?</h3>
+        <div class="option-btns" id="kq2-opts">
+          <button class="option-btn" onclick="answerKQ(2,'a')"><span class="opt-icon">📝</span> The employee has bad data in their EN record that must be manually fixed</button>
+          <button class="option-btn" onclick="answerKQ(2,'b')"><span class="opt-icon">⏰</span> The partner API was unavailable; EN will auto-retry tonight, or the customer can manually Pull from Payroll now</button>
+          <button class="option-btn" onclick="answerKQ(2,'c')"><span class="opt-icon">🚫</span> The employee's Payroll ID is blocked</button>
+        </div>
+        <div class="feedback-box feedback-correct" id="kq2-feedback-b">✅ <strong>Correct!</strong> "We're On It" = partner API issue (timeout/unavailable). EN handles this automatically overnight. The customer can also manually trigger a Pull from Payroll if they can't wait.</div>
+        <div class="feedback-box feedback-incorrect" id="kq2-feedback-a">❌ That describes "Needs Action" — where something in EN or the employee's data needs to be fixed. "We're On It" is specifically a partner API availability issue.</div>
+        <div class="feedback-box feedback-incorrect" id="kq2-feedback-c">❌ A blocked Payroll ID would result in no transmission at all. If there's a failed incoming transmission in the logs, the ID is not blocked.</div>
+      </div>
+
+      <!-- Q3 -->
+      <div class="decision-box">
+        <h3><span class="q-icon">3</span> No incoming transmission exists, the employee is not blocked, and the group went live 2 years ago. The change was made yesterday. What do you do?</h3>
+        <div class="option-btns" id="kq3-opts">
+          <button class="option-btn" onclick="answerKQ(3,'a')"><span class="opt-icon">📋</span> Use the "Force a demographic change" macro</button>
+          <button class="option-btn" onclick="answerKQ(3,'b')"><span class="opt-icon">🔁</span> Have the customer Pull from Payroll from the Integration Health dashboard</button>
+          <button class="option-btn" onclick="answerKQ(3,'c')"><span class="opt-icon">⬆️</span> Escalate to Tier 2 — this points to a partner-side issue</button>
+          <button class="option-btn" onclick="answerKQ(3,'d')"><span class="opt-icon">⏳</span> Tell the customer to wait 24 hours for it to sync automatically</button>
+        </div>
+        <div class="feedback-box feedback-correct" id="kq3-feedback-c">✅ <strong>Correct!</strong> All internal causes have been ruled out: no blocked ID, group is live, change was made while live — yet EN never received a notification. This points squarely to a partner-side issue and warrants a Tier 2 escalation.</div>
+        <div class="feedback-box feedback-incorrect" id="kq3-feedback-a">❌ The "Force a demographic change" macro is for when the employee doesn't exist in EN yet AND the group was still in audit mode. Neither applies here.</div>
+        <div class="feedback-box feedback-incorrect" id="kq3-feedback-b">❌ "Pull from Payroll" requires an existing transmission row to act on. With no transmission at all, there's nothing to pull from within EN's Integration Health dashboard.</div>
+        <div class="feedback-box feedback-incorrect" id="kq3-feedback-d">❌ Since the group is live and the ID is not blocked, waiting won't help — EN won't receive the change unless the partner sends a notification. This needs escalation.</div>
+      </div>
+
+      <div id="kc-complete" style="display:none;" class="feedback-box feedback-correct show">
+        🎉 <strong>All questions answered!</strong> You're ready to see the full resolution flowchart.
+      </div>
+
+      <div class="nav-btns">
+        <button class="btn-secondary" onclick="goToStep(5)">← Back</button>
+        <button class="btn-primary" id="btn-step6-next" onclick="goToStep(7)" disabled>View Summary & Flowchart →</button>
+      </div>
+    </div>
+
+    <!-- ───────── STEP 7 ───────── -->
+    <div class="screen" id="screen-7">
+      <div class="screen-title">Summary: Full Troubleshooting Flow</div>
+      <div class="screen-subtitle">Use this as your reference guide for any "payroll change not updating in EN" scenario.</div>
+
+      <div class="score-display" id="final-score-display">
+        <div class="score-num" id="final-score-num">—</div>
+        <div class="score-label">Knowledge Check Score</div>
+      </div>
+
+      <!-- Flowchart -->
+      <div class="en-window" style="padding:20px;">
+        <div style="font-size:13px;font-weight:700;color:#111827;margin-bottom:16px;text-align:center;">Troubleshooting Flowchart: Payroll Change Not Updating in EN</div>
+
+        <!-- Level 1 -->
+        <div style="text-align:center;margin-bottom:8px;">
+          <div style="display:inline-block;background:#1a56db;color:white;border-radius:8px;padding:10px 20px;font-size:12.5px;font-weight:600;">1. Check Transmissions dashboard for "Incoming Demographics" for this employee</div>
+        </div>
+        <div style="text-align:center;margin-bottom:8px;font-size:20px;color:#9ca3af;">↓</div>
+
+        <!-- Level 2: Branch -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:8px;">
+          <div style="text-align:center;">
+            <div style="background:#d1fae5;border:2px solid #6ee7b7;border-radius:8px;padding:10px;font-size:12px;font-weight:600;color:#065f46;">✅ Failed Incoming Demographics FOUND</div>
+          </div>
+          <div style="text-align:center;">
+            <div style="background:#fee2e2;border:2px solid #fca5a5;border-radius:8px;padding:10px;font-size:12px;font-weight:600;color:#7f1d1d;">❌ NO Incoming Demographics found</div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:8px;text-align:center;color:#9ca3af;font-size:18px;">
+          <div>↓</div><div>↓</div>
+        </div>
+
+        <!-- Level 3 -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:8px;">
+          <div>
+            <div style="background:#ede9fe;border:1px solid #c4b5fd;border-radius:8px;padding:10px;font-size:12px;color:#4c1d95;margin-bottom:6px;">
+              <strong>🔵 "We're On It" in Integration Health:</strong><br>Partner API timeout → EN auto-retries tonight<br><em>Or:</em> Customer → Integration Health → ⋮ → Pull from Payroll
+            </div>
+            <div style="background:#fef9c3;border:1px solid #fcd34d;border-radius:8px;padding:10px;font-size:12px;color:#78350f;">
+              <strong>🟡 "Needs Action" in Integration Health:</strong><br>Bad/missing data in employee record → Read Instructions column → Customer self-resolves
+            </div>
+          </div>
+          <div>
+            <div style="background:#f3f4f6;border:1px solid var(--en-border);border-radius:8px;padding:10px;font-size:12px;color:#374151;margin-bottom:6px;">
+              <strong>Check: Is employee's Payroll ID blocked?</strong><br>Payroll Dashboard → Blocked Demographics stat → Search<br>If blocked → unblock the Payroll ID
+            </div>
+            <div style="text-align:center;font-size:16px;color:#9ca3af;margin-bottom:6px;">↓ if not blocked</div>
+            <div style="background:#f3f4f6;border:1px solid var(--en-border);border-radius:8px;padding:10px;font-size:12px;color:#374151;margin-bottom:6px;">
+              <strong>Was change made BEFORE Demographics went Live?</strong>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:11px;">
+              <div style="background:#fef9c3;border:1px solid #fcd34d;border-radius:6px;padding:8px;color:#78350f;">
+                <strong>Yes (Audit Mode):</strong><br>• New record? → Force demographic change macro<br>• Existing? → Integration Health → ⋮ → Pull from Payroll
+              </div>
+              <div style="background:#fee2e2;border:1px solid #fca5a5;border-radius:6px;padding:8px;color:#7f1d1d;">
+                <strong>No (was live):</strong><br>Partner-side issue → <strong>Escalate to Tier 2</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="summary-grid">
+        <div class="summary-card">
+          <h4>🔵 "We're On It" Resolution</h4>
+          <ul>
+            <li>Partner API was temporarily unavailable</li>
+            <li>EN auto-retries overnight</li>
+            <li>Customer can manually Pull from Payroll via Integration Health → ⋮ Actions</li>
+            <li>Employee moves to "In Sync" after successful pull</li>
+          </ul>
+        </div>
+        <div class="summary-card">
+          <h4>🟡 "Needs Action" Resolution</h4>
+          <ul>
+            <li>Employee record has bad or missing data</li>
+            <li>Instructions shown directly on the dashboard</li>
+            <li>Customer self-resolves — no need to call Support</li>
+            <li>Fix the issue → retry → employee moves to "In Sync"</li>
+          </ul>
+        </div>
+        <div class="summary-card">
+          <h4>🚫 Blocked Payroll ID</h4>
+          <ul>
+            <li>Find via Payroll Dashboard → Blocked Demographics stat</li>
+            <li>Search for the employee's Payroll ID</li>
+            <li>Unblock the ID in the employee's payroll profile</li>
+          </ul>
+        </div>
+        <div class="summary-card">
+          <h4>⬆️ Tier 2 Escalation Criteria</h4>
+          <ul>
+            <li>No incoming transmission found</li>
+            <li>AND Payroll ID is not blocked</li>
+            <li>AND group was already live when change was made</li>
+            <li>→ Points to partner-side issue</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="nav-btns">
+        <button class="btn-secondary" onclick="goToStep(6)">← Back</button>
+        <button class="btn-primary" onclick="resetDemo()">🔄 Restart Demo</button>
+      </div>
+    </div>
+
+  </div><!-- /main-content -->
+</div><!-- /main-layout -->
+
+<script>
+  let currentStep = 1;
+  const totalSteps = 7;
+  const completedSteps = new Set();
+  let kqAnswers = { 1: false, 2: false, 3: false };
+  let kqCount = 0;
+
+  function goToStep(n) {
+    // Mark current as completed
+    completedSteps.add(currentStep);
+
+    // Hide all screens
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById('screen-' + n).classList.add('active');
+
+    // Update sidebar
+    document.querySelectorAll('.step-item').forEach(el => el.classList.remove('active'));
+    const navEl = document.getElementById('nav-step-' + n);
+    if (navEl) navEl.classList.add('active');
+
+    // Update completed styling
+    completedSteps.forEach(s => {
+      const snum = document.getElementById('snum-' + s);
+      if (snum && s !== n) { snum.textContent = '✓'; snum.style.background = '#057a55'; }
+      const conn = document.getElementById('conn-' + s);
+      if (conn) conn.classList.add('done');
+    });
+
+    // Update progress
+    currentStep = n;
+    const pct = Math.round((n / totalSteps) * 100);
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('progressLabel').textContent = 'Step ' + n + ' of ' + totalSteps;
+
+    // Scroll top
+    document.querySelector('.main-content').scrollTop = 0;
+
+    // Compute final score on step 7
+    if (n === 7) computeFinalScore();
+  }
+
+  function showInSyncDrilldown() {
+    const el = document.getElementById('insync-drilldown');
+    if (el) { el.style.display = 'block'; el.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
+  }
+
+  function filterInSyncTable(val) {
+    const rows = document.querySelectorAll('.insync-row');
+    const q = val.toLowerCase();
+    rows.forEach(r => {
+      r.style.display = (q === '' || r.dataset.name.includes(q)) ? '' : 'none';
+    });
+    const foundMsg = document.getElementById('insync-found-msg');
+    if (foundMsg) foundMsg.style.display = (q.includes('hoff') || q.includes('ian')) ? 'block' : 'none';
+  }
+
+  function answerQ2(choice) {
+    const opts = document.querySelectorAll('#q2-opts .option-btn');
+    opts.forEach((btn, i) => {
+      const c = ['a','b','c'][i];
+      if (c === choice) btn.classList.add(choice === 'a' ? 'correct' : 'incorrect');
+      else btn.classList.add('dimmed');
+      btn.classList.add('selected');
+    });
+    document.getElementById('q2-feedback-' + choice).classList.add('show');
+    if (choice === 'a') document.getElementById('btn-step2-next').disabled = false;
+  }
+
+  function switchBranch3(which) {
+    const woi = document.getElementById('branch3-woi');
+    const na = document.getElementById('branch3-na');
+    const tabWoi = document.getElementById('tab-woi');
+    const tabNa = document.getElementById('tab-na');
+    if (which === 'woi') {
+      woi.style.display = 'block'; na.style.display = 'none';
+      tabWoi.style.borderBottomColor = '#1a56db'; tabWoi.style.background = 'var(--en-blue-light)'; tabWoi.style.color = 'var(--en-blue)'; tabWoi.style.fontWeight = '700';
+      tabNa.style.borderBottomColor = 'transparent'; tabNa.style.background = '#f9fafb'; tabNa.style.color = '#6b7280'; tabNa.style.fontWeight = '600';
+    } else {
+      woi.style.display = 'none'; na.style.display = 'block';
+      tabNa.style.borderBottomColor = '#c27803'; tabNa.style.background = 'var(--en-yellow-light)'; tabNa.style.color = 'var(--en-yellow)'; tabNa.style.fontWeight = '700';
+      tabWoi.style.borderBottomColor = 'transparent'; tabWoi.style.background = '#f9fafb'; tabWoi.style.color = '#6b7280'; tabWoi.style.fontWeight = '600';
+    }
+  }
+
+  function showNAIgnoreConfirm() {
+    document.getElementById('m3-na').classList.remove('open');
+    document.getElementById('na-ignore-confirm').style.display = 'block';
+  }
+
+  const q3Done = { done: false };
+  function answerQ3(choice) {
+    if (q3Done.done) return;
+    q3Done.done = true;
+    const opts = document.querySelectorAll('#q3-opts .option-btn');
+    const letters = ['a','b','c'];
+    opts.forEach((btn, i) => {
+      const c = letters[i];
+      if (c === choice) btn.classList.add(c === 'a' ? 'correct' : 'incorrect');
+      else if (c === 'a') btn.classList.add('correct');
+      else btn.classList.add('dimmed');
+      btn.classList.add('selected');
+    });
+    document.getElementById('q3-feedback-' + choice).classList.add('show');
+  }
+
+  function showPullConfirm() {
+    document.getElementById('m3').classList.remove('open');
+    document.getElementById('pull-confirm').style.display = 'block';
+  }
+
+  function toggleMenu(id) {
+    // close all others
+    document.querySelectorAll('.dropdown-menu').forEach(m => {
+      if (m.id !== id) m.classList.remove('open');
+    });
+    const el = document.getElementById(id);
+    if (el) el.classList.toggle('open');
+  }
+
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.actions-menu')) {
+      document.querySelectorAll('.dropdown-menu').forEach(m => m.classList.remove('open'));
+    }
+  });
+
+  function showBlockedSection() {
+    const sec = document.getElementById('blocked-section');
+    sec.style.display = 'block';
+    document.getElementById('blocked-default').style.display = 'none';
+    document.getElementById('blocked-results').style.display = 'block';
+  }
+
+  function checkBlockedSearch(val) {
+    const found = document.getElementById('blocked-found');
+    const notfound = document.getElementById('blocked-not-found');
+    if (val.toLowerCase().includes('g333') || val.toLowerCase().includes('hoffman') || val.toLowerCase().includes('ian')) {
+      found.style.display = 'block'; notfound.style.display = 'none';
+    } else if (val.length > 2) {
+      found.style.display = 'none'; notfound.style.display = 'block';
+    } else {
+      found.style.display = 'none'; notfound.style.display = 'none';
+    }
+  }
+
+  function answerQ4(choice) {
+    const opts = document.querySelectorAll('#q4-opts .option-btn');
+    opts.forEach((btn, i) => {
+      const c = ['a','b','c'][i];
+      if (c === choice) btn.classList.add(choice === 'a' ? 'correct' : 'incorrect');
+      else btn.classList.add('dimmed');
+      btn.classList.add('selected');
+    });
+    document.getElementById('q4-feedback-' + choice).classList.add('show');
+    if (choice === 'a') document.getElementById('btn-step4-next').disabled = false;
+  }
+
+  const kqCorrect = { 1: 'b', 2: 'b', 3: 'c' };
+  const kqDone = { 1: false, 2: false, 3: false };
+
+  function answerKQ(qnum, choice) {
+    if (kqDone[qnum]) return;
+    kqDone[qnum] = true;
+    const correct = kqCorrect[qnum];
+    const opts = document.querySelectorAll('#kq' + qnum + '-opts .option-btn');
+    const letters = ['a','b','c','d'];
+    opts.forEach((btn, i) => {
+      const c = letters[i];
+      if (c === choice) btn.classList.add(c === correct ? 'correct' : 'incorrect');
+      else if (c === correct) btn.classList.add('correct');
+      else btn.classList.add('dimmed');
+      btn.classList.add('selected');
+    });
+    document.getElementById('kq' + qnum + '-feedback-' + choice).classList.add('show');
+    if (choice === correct) kqAnswers[qnum] = true;
+
+    if (kqDone[1] && kqDone[2] && kqDone[3]) {
+      document.getElementById('kc-complete').style.display = 'block';
+      document.getElementById('btn-step6-next').disabled = false;
+    }
+  }
+
+  function computeFinalScore() {
+    const correct = Object.values(kqAnswers).filter(Boolean).length;
+    const pct = Math.round((correct / 3) * 100);
+    document.getElementById('final-score-num').textContent = pct + '%';
+    const labels = { 100: '🏆 Perfect Score!', 67: '👍 Good — review the missed question', 33: '📚 Keep practicing!', 0: '📚 Review the material and try again' };
+    const msg = pct === 100 ? labels[100] : pct >= 67 ? labels[67] : pct >= 33 ? labels[33] : labels[0];
+    document.querySelector('.score-display .score-label').textContent = msg + '  (' + correct + '/3 correct)';
+  }
+
+  function resetDemo() {
+    completedSteps.clear();
+    kqAnswers = { 1: false, 2: false, 3: false };
+    Object.assign(kqDone, { 1: false, 2: false, 3: false });
+    // Reset step nums
+    for (let i = 1; i <= 7; i++) {
+      const snum = document.getElementById('snum-' + i);
+      if (snum) { snum.textContent = i; snum.style.background = ''; }
+      const conn = document.getElementById('conn-' + i);
+      if (conn) conn.classList.remove('done');
+    }
+    // Reset buttons
+    document.getElementById('btn-step2-next').disabled = true;
+    document.getElementById('btn-step4-next').disabled = true;
+    document.getElementById('btn-step6-next').disabled = true;
+    // Reset feedback
+    document.querySelectorAll('.feedback-box').forEach(f => f.classList.remove('show'));
+    document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('correct','incorrect','dimmed','selected'));
+    document.getElementById('kc-complete').style.display = 'none';
+    document.getElementById('pull-confirm').style.display = 'none';
+    const naIgnore = document.getElementById('na-ignore-confirm');
+    if (naIgnore) naIgnore.style.display = 'none';
+    q3Done.done = false;
+    switchBranch3('woi');
+    const isd = document.getElementById('insync-drilldown');
+    if (isd) isd.style.display = 'none';
+    const isf = document.getElementById('insync-found-msg');
+    if (isf) isf.style.display = 'none';
+    const isi = document.getElementById('insync-search');
+    if (isi) isi.value = '';
+    document.querySelectorAll('.insync-row').forEach(r => r.style.display = '');
+    document.getElementById('blocked-section').style.display = 'none';
+    goToStep(1);
+  }
+</script>
+</body>
+</html>
