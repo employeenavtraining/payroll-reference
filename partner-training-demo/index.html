@@ -243,8 +243,8 @@ body{font-family:'DM Sans',-apple-system,BlinkMacSystemFont,sans-serif;font-size
 (function(){
   var _cp='';
   var _today=(function(){var d=new Date();return (d.getMonth()+1)+'/'+d.getDate()+'/'+d.getFullYear();})();
-  var _pl={'ukg':'UKG Ready','adp':'ADP','adp-wfn':'ADP Workforce Now','adp-run':'ADP RUN','adp-ts':'ADP TotalSource','paylocity':'Paylocity','paychex':'Paychex Flex','paycor':'Paycor','isolved':'isolved','other':'Your Payroll Partner'};
-  var _apiPartners=['ukg','adp','adp-wfn','adp-run','adp-ts','paychex','paylocity'];
+  var _pl={'ukg':'UKG Ready','adp':'ADP','adp-wfn':'ADP Workforce Now','adp-run':'ADP RUN','paylocity':'Paylocity','paychex':'Paychex Flex','paycor':'Paycor','isolved':'isolved','other':'Your Payroll Partner'};
+  var _apiPartners=['ukg','adp','adp-wfn','adp-run','paychex','paylocity'];
   var _liveStatus={'ukg':'Demographics, Deductions & Employer Contributions Live','paychex':'Demographics, Deductions & Employer Contributions Live','paylocity':'Demographics, Deductions & Employer Contributions Live'};
 
   function _g(id){return document.getElementById(id);}
@@ -881,7 +881,6 @@ body{font-family:'DM Sans',-apple-system,BlinkMacSystemFont,sans-serif;font-size
             <option value="ukg">UKG Ready</option>
             <option value="adp-wfn">ADP Workforce Now</option>
             <option value="adp-run">ADP RUN</option>
-            <option value="adp-ts">ADP TotalSource</option>
             <option value="paylocity">Paylocity</option>
             <option value="paychex">Paychex Flex</option>
             <option value="paycor">Paycor</option>
