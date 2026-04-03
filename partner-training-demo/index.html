@@ -331,7 +331,19 @@ body{font-family:'DM Sans',-apple-system,BlinkMacSystemFont,sans-serif;font-size
   }
   function completedAuth(){
     var name=_pl[_cp]||'Partner';
-    var code=_cp==='ukg'?'UKG1234567':(_cp&&_cp.indexOf('adp')===0)?'G3YKSRCDRNKR17R1':'PART1234567';
+    // Client IDs must match what's shown in the partner steps throughout the demo
+    var _clientIds={
+      'ukg':'71634460-0243-4916-B0BF-F0BFC3E46EFA',
+      'adp':'G3YKSRCDRNKR17R1',
+      'adp-wfn':'G3YKSRCDRNKR17R1',
+      'adp-run':'G3YKSRCDRNKR17R1',
+      'isolved':'ISO-TEST-1',
+      'paylocity':'ENC1',
+      'paychex':'ENC1',
+      'paycor':'ENC1',
+      'other':'ENC1'
+    };
+    var code=_clientIds[_cp]||'ENC1';
     var h=_g('dem-partner-hdr');if(h)h.textContent=name;
     var c=_g('cm-partner-name');if(c)c.textContent=name;
     var lv=_g('live-int-name');if(lv)lv.textContent=name+': '+code+' ('+name+')';
@@ -1476,12 +1488,12 @@ body{font-family:'DM Sans',-apple-system,BlinkMacSystemFont,sans-serif;font-size
           <div style="font-size:17px;font-weight:700;color:var(--gray-900);margin-bottom:3px;">Test Vendor</div>
           <div style="border:1px solid var(--gray-200);border-radius:var(--radius-sm);overflow:hidden;">
             <table style="width:100%;border-collapse:collapse;font-size:12.5px;">
-              <thead><tr style="background:var(--gray-50);border-bottom:2px solid var(--gray-200);"><th style="padding:8px 12px;text-align:left;font-weight:700;color:var(--gray-600);">Client Info</th><th style="padding:8px 12px;font-weight:700;color:var(--gray-600);">Identifiers</th><th style="padding:8px 12px;font-weight:700;color:var(--gray-600);">Status</th><th style="padding:8px 12px;font-weight:700;color:var(--gray-600);">Date</th></tr></thead>
+              <thead><tr style="background:var(--gray-50);border-bottom:2px solid var(--gray-200);"><th style="padding:8px 12px;text-align:left;font-weight:700;color:var(--gray-600);">Client Info</th><th style="padding:8px 12px;text-align:left;font-weight:700;color:var(--gray-600);">Identifiers</th><th style="padding:8px 12px;text-align:center;font-weight:700;color:var(--gray-600);">Status</th><th style="padding:8px 12px;text-align:right;font-weight:700;color:var(--gray-600);">Date</th></tr></thead>
               <tbody><tr style="background:var(--green-light);">
-                <td style="padding:10px 12px;"><a class="link-blue" style="font-weight:600;">Employee Navigator Company</a><br><span style="font-size:11px;color:var(--gray-400);">SUBSCRIBER</span></td>
-                <td style="padding:10px 12px;"><span style="font-weight:700;font-size:13px;" id="step3-client-id-b">ENC1</span><br><span style="font-size:11px;color:var(--gray-400);">CLIENT ID</span></td>
-                <td style="padding:10px 12px;"><span style="font-weight:700;color:#fff;background:var(--orange);border-radius:4px;padding:3px 10px;font-size:12px;">Demographic Audit</span></td>
-                <td style="padding:10px 12px;font-size:12px;color:var(--gray-400);">04/03/2026</td>
+                <td style="padding:10px 12px;vertical-align:middle;"><a class="link-blue" style="font-weight:600;">Employee Navigator Company</a><br><span style="font-size:11px;color:var(--gray-400);">SUBSCRIBER</span></td>
+                <td style="padding:10px 12px;vertical-align:middle;"><span style="font-weight:700;font-size:13px;" id="step3-client-id-b">ENC1</span><br><span style="font-size:11px;color:var(--gray-400);">CLIENT ID</span></td>
+                <td style="padding:10px 12px;text-align:center;vertical-align:middle;"><span style="display:inline-block;font-weight:700;color:#fff;background:#e07b00;border-radius:6px;padding:5px 16px;font-size:12.5px;white-space:nowrap;">Demographic Audit</span></td>
+                <td style="padding:10px 12px;text-align:right;vertical-align:middle;font-size:12px;color:var(--gray-400);">04/03/2026</td>
               </tr></tbody>
             </table>
           </div>
@@ -1496,7 +1508,7 @@ body{font-family:'DM Sans',-apple-system,BlinkMacSystemFont,sans-serif;font-size
       <div style="font-size:14px;font-weight:700;color:var(--gray-900);margin-bottom:6px;">Step <span class="step-label-4">5</span> — Partner Sends the "Getting Started" Email</div>
       <div style="font-size:13px;color:var(--gray-600);margin-bottom:16px;line-height:1.6;">The partner sends a kick-off email to the broker, HR contact, and <strong>payroll@employeenavigator.com</strong> to officially begin the integration process.</div>
       <div class="email-mock">
-        <div class="email-field"><div class="email-field-label">To</div><div><span class="email-tag">payroll@employeenavigator.com <span class="x">&#10005;</span></span><span class="email-tag">payroll@employeenavigator.com <span class="x">&#10005;</span></span><span style="color:var(--gray-500);font-size:12.5px;">payroll@employeenavigator.com</span></div></div>
+        <div class="email-field"><div class="email-field-label">To</div><div><span class="email-tag">HR@company.com <span class="x">&#10005;</span></span><span class="email-tag">broker@agency.com <span class="x">&#10005;</span></span><span style="color:var(--gray-500);font-size:12.5px;">payroll@employeenavigator.com</span></div></div>
         <div class="email-field"><div class="email-field-label">Cc</div><div></div></div>
         <div class="email-subject" style="font-weight:600;">Getting Started - EN/[Partner name] integration - Your Payroll company (<span id="email-client-id">ENC1</span>)</div>
         <div class="email-body">
@@ -1506,7 +1518,7 @@ body{font-family:'DM Sans',-apple-system,BlinkMacSystemFont,sans-serif;font-size
           <p style="margin-top:10px;"><strong>IMPORTANT NOTES:</strong></p>
           <ul style="margin:8px 0 8px 20px;font-size:13px;line-height:2;">
             <li>Please reference all user guides and training information provided to you during this process to complete the necessary steps of this integration setup in order to go Live.</li>
-            <li>To begin, you must review the following items:<ul style="margin-left:16px;"><li><a class="link-blue">Payroll: Employee Navigator's payroll integration user guide</a></li></ul></li>
+            <li>To begin, you must review the following items:<ul style="margin-left:16px;"><li><a class="link-blue" href="https://support.employeenavigator.com/hc/en-us/articles/33658712582676-Payroll-Employee-Navigator-s-payroll-integration-user-guide" target="_blank">Payroll: Employee Navigator's payroll integration user guide</a></li></ul></li>
           </ul>
           <p style="margin-top:10px;"><strong>Support Contact information during this integration process:</strong></p>
           <ul style="margin:8px 0 8px 20px;font-size:13px;line-height:2;">
@@ -2048,7 +2060,7 @@ body{font-family:'DM Sans',-apple-system,BlinkMacSystemFont,sans-serif;font-size
           <!-- Single persistent Vision row with End in Payroll button -->
           <table class="en-table" style="font-size:12.5px;">
             <thead><tr>
-              <th style="width:22px;"><input type="checkbox" disabled></th>
+              <th style="width:22px;"><input type="checkbox"></th>
               <th style="width:115px;">Employee</th><th style="width:22px;"></th>
               <th style="width:55px;">Codes EN</th><th style="width:55px;">Payroll</th>
               <th style="width:60px;">Amounts EN</th><th style="width:60px;">Payroll</th>
@@ -2056,7 +2068,7 @@ body{font-family:'DM Sans',-apple-system,BlinkMacSystemFont,sans-serif;font-size
             </tr></thead>
             <tbody>
               <tr style="background:var(--orange-light);border-left:3px solid var(--orange);">
-                <td><input type="checkbox" disabled></td>
+                <td><input type="checkbox"></td>
                 <td><a class="link-blue">James Carter</a></td>
                 <td><span style="color:var(--gray-400);font-size:16px;">&#8801;</span></td>
                 <td></td><td style="color:var(--orange);font-weight:600;">Vision</td>
