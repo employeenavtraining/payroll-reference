@@ -1,0 +1,442 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Integrated Payroll Fields Reference</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f5f4f0;
+    --surface: #ffffff;
+    --border: #e0ddd6;
+    --border-strong: #c8c4bb;
+    --text: #1a1917;
+    --text-muted: #6b6860;
+    --text-faint: #9c9990;
+    --accent: #1a4fd6;
+    --accent-bg: #eef2fc;
+    --accent-text: #1a4fd6;
+    --warn-bg: #fff8ec;
+    --warn-text: #9a5c00;
+    --success-bg: #edf7f0;
+    --success-text: #1a6e3a;
+    --tag-bg: #eeede9;
+    --tag-text: #4a4844;
+  }
+
+  body {
+    font-family: 'IBM Plex Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.5;
+    min-height: 100vh;
+  }
+
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 24px 32px 20px;
+  }
+
+  .header-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .header-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    margin-bottom: 4px;
+  }
+
+  h1 {
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: -0.02em;
+  }
+
+  .header-meta {
+    font-size: 12px;
+    color: var(--text-faint);
+    margin-top: 4px;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  .field-count {
+    background: var(--accent-bg);
+    color: var(--accent-text);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 6px 14px;
+    border-radius: 4px;
+    white-space: nowrap;
+    align-self: center;
+  }
+
+  .controls {
+    padding: 16px 32px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .search-wrap {
+    position: relative;
+    flex: 1;
+    min-width: 220px;
+    max-width: 360px;
+  }
+
+  .search-icon {
+    position: absolute;
+    left: 11px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-faint);
+    font-size: 14px;
+    pointer-events: none;
+  }
+
+  input[type=text] {
+    width: 100%;
+    padding: 8px 12px 8px 34px;
+    border: 1px solid var(--border-strong);
+    border-radius: 6px;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 13px;
+    color: var(--text);
+    background: var(--bg);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  input[type=text]:focus { border-color: var(--accent); }
+  input[type=text]::placeholder { color: var(--text-faint); }
+
+  .filters {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .filter-btn {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    padding: 6px 13px;
+    border-radius: 4px;
+    border: 1px solid var(--border-strong);
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+
+  .filter-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .filter-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+  main { padding: 28px 32px; max-width: 1200px; }
+
+  .section { margin-bottom: 36px; }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .section-title {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .section-line {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .section-count {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--text-faint);
+  }
+
+  .table-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  thead tr {
+    background: #f9f8f5;
+    border-bottom: 1px solid var(--border);
+  }
+
+  th {
+    text-align: left;
+    padding: 9px 14px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    white-space: nowrap;
+  }
+
+  td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+    line-height: 1.45;
+    color: var(--text);
+  }
+
+  tbody tr:last-child td { border-bottom: none; }
+
+  tbody tr:hover td { background: #faf9f6; }
+
+  .field-name {
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--text);
+  }
+
+  .mono { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--text-muted); }
+
+  .badge {
+    display: inline-block;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+
+  .badge-blue { background: var(--accent-bg); color: var(--accent-text); }
+  .badge-amber { background: var(--warn-bg); color: var(--warn-text); }
+  .badge-green { background: var(--success-bg); color: var(--success-text); }
+  .badge-gray { background: var(--tag-bg); color: var(--tag-text); }
+
+  .none { color: var(--text-faint); font-size: 12px; }
+
+  .no-results {
+    text-align: center;
+    padding: 48px 24px;
+    color: var(--text-faint);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+  }
+
+  .col-field { width: 16%; }
+  .col-stored { width: 17%; }
+  .col-audit { width: 17%; }
+  .col-ui { width: 18%; }
+  .col-val { width: 16%; }
+  .col-notes { width: 16%; }
+
+  @media (max-width: 768px) {
+    header, .controls, main { padding-left: 16px; padding-right: 16px; }
+    table { display: block; overflow-x: auto; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-top">
+    <div>
+      <div class="header-label">Employee Navigator — Payroll Integration</div>
+      <h1>Integrated Payroll Fields</h1>
+    </div>
+    <div class="field-count" id="field-count">48 fields</div>
+  </div>
+</header>
+
+<div class="controls">
+  <div class="search-wrap">
+    <span class="search-icon">&#9906;</span>
+    <input type="text" id="search" placeholder="Search fields, types, notes..." oninput="render()">
+  </div>
+  <div class="filters">
+    <button class="filter-btn active" data-cat="all" onclick="setFilter('all')">All</button>
+    <button class="filter-btn" data-cat="Personal" onclick="setFilter('Personal')">Personal</button>
+    <button class="filter-btn" data-cat="Contact" onclick="setFilter('Contact')">Contact</button>
+    <button class="filter-btn" data-cat="Compensation" onclick="setFilter('Compensation')">Compensation</button>
+    <button class="filter-btn" data-cat="Employment" onclick="setFilter('Employment')">Employment</button>
+    <button class="filter-btn" data-cat="Org" onclick="setFilter('Org')">Org Details</button>
+    <button class="filter-btn" data-cat="Other" onclick="setFilter('Other')">Other</button>
+  </div>
+</div>
+
+<main id="main"></main>
+
+<script>
+const data = [
+  { cat:"Personal", field:"Payroll ID", stored:"Text, ≤50 chars", audit:"Text, ≤50 chars", ui:"Text field, ≤50 chars", validation:"None", notes:"Managed in EN only", noteType:"blue" },
+  { cat:"Personal", field:"Employee Identifier", stored:"Not stored", audit:"Text, ≤100 chars", ui:"Not in UI", validation:"None", notes:"Audit log only; not visible in EN app", noteType:"amber" },
+  { cat:"Personal", field:"First Name", stored:"Text, ≤50 chars", audit:"Text, ≤50 chars", ui:"Text field, ≤50 chars", validation:"Max 50 chars enforced", notes:"", noteType:"" },
+  { cat:"Personal", field:"Middle Name", stored:"Text, ≤25 chars", audit:"Text, ≤25 chars", ui:"Text field, ≤25 chars", validation:"Max 25 chars enforced", notes:"Punctuation stripped on save", noteType:"gray" },
+  { cat:"Personal", field:"Last Name", stored:"Text, ≤75 chars", audit:"Text, ≤75 chars", ui:"Text field, ≤50 chars", validation:"Max 75 chars", notes:"UI caps at 50; DB stores up to 75. Values >50 chars only via integration/API", noteType:"gray" },
+  { cat:"Personal", field:"Suffix", stored:"Number (as text)", audit:"Number (as text)", ui:"Dropdown", validation:"Must match suffix list", notes:"", noteType:"" },
+  { cat:"Personal", field:"Date of Birth", stored:"Date", audit:"Date", ui:"Date picker 01/01/1901–today", validation:"Range: 1900–2079", notes:"", noteType:"" },
+  { cat:"Personal", field:"Sex", stored:"Not stored", audit:"Not stored", ui:"Male/Female radio button", validation:"None", notes:"UI display only; never saved. Not same as Gender field", noteType:"amber" },
+  { cat:"Personal", field:"Gender", stored:"Single char (M, F, blank)", audit:"Single char", ui:"Not in UI", validation:"Must be M, F, or blank", notes:"Database only; not visible in EN UI", noteType:"amber" },
+  { cat:"Personal", field:"Gender Identity", stored:"Number (as text)", audit:"Number (as text)", ui:"Dropdown", validation:"Must match gender identity list", notes:"", noteType:"" },
+  { cat:"Personal", field:"SSN", stored:"Text, ≤10 chars", audit:"Text, ≤10 chars", ui:"Text field, ≤9 chars", validation:"None", notes:"", noteType:"" },
+  { cat:"Contact", field:"Address Line 1", stored:"Text, ≤254 chars", audit:"Text, ≤254 chars", ui:"Text field, ≤75 chars", validation:"None", notes:"UI caps at 75; DB stores up to 254", noteType:"gray" },
+  { cat:"Contact", field:"Address Line 2", stored:"Text, ≤50 chars", audit:"Text, ≤50 chars", ui:"Text field, ≤50 chars", validation:"None", notes:"", noteType:"" },
+  { cat:"Contact", field:"City", stored:"Text, ≤50 chars", audit:"Text, ≤50 chars", ui:"Text field, ≤50 chars", validation:"None", notes:"", noteType:"" },
+  { cat:"Contact", field:"State", stored:"Number (as text)", audit:"Number (as text)", ui:"Dropdown", validation:"Must match state list", notes:"", noteType:"" },
+  { cat:"Contact", field:"Zip Code", stored:"Text, ≤15 chars", audit:"Text, ≤15 chars", ui:"Text field, ≤15 chars", validation:"None", notes:"", noteType:"" },
+  { cat:"Contact", field:"County", stored:"Number (as text)", audit:"Number (as text)", ui:"Dropdown (filtered by state)", validation:"Must match county list", notes:"", noteType:"" },
+  { cat:"Contact", field:"Country", stored:"Number (as text)", audit:"Number (as text)", ui:"Dropdown", validation:"Must match country list", notes:"Employee record and audit log store field ID differently", noteType:"gray" },
+  { cat:"Contact", field:"Home Phone", stored:"Text, ≤50 chars", audit:"Text, ≤50 chars", ui:"Text field, ≤10 chars", validation:"None", notes:"UI caps at 10; DB stores up to 50", noteType:"gray" },
+  { cat:"Contact", field:"Mobile Phone", stored:"Text, ≤50 chars", audit:"Text, ≤50 chars", ui:"Text field, ≤10 chars", validation:"None", notes:"", noteType:"" },
+  { cat:"Contact", field:"Work Phone", stored:"Text, ≤50 chars", audit:"Text, ≤50 chars", ui:"Text field, ≤10 chars", validation:"None", notes:"", noteType:"" },
+  { cat:"Contact", field:"Extension", stored:"Number", audit:"Number", ui:"Text field, ≤5 digits", validation:"None", notes:"Managed in EN only", noteType:"blue" },
+  { cat:"Contact", field:"Personal Email", stored:"Text, ≤75 chars", audit:"Text, ≤50 chars", ui:"Text field, ≤75 chars", validation:"None", notes:"Audit log truncates to 50 chars; stored record unaffected", noteType:"gray" },
+  { cat:"Contact", field:"Work Email", stored:"Text, ≤75 chars", audit:"Text, ≤50 chars", ui:"Text field, ≤75 chars", validation:"None", notes:"Audit log truncates to 50 chars; stored record unaffected", noteType:"gray" },
+  { cat:"Contact", field:"Primary Email Type", stored:"Not stored", audit:"Text, ≤50 chars", ui:"Dropdown", validation:"None", notes:"Audit log only; not stored", noteType:"amber" },
+  { cat:"Compensation", field:"Compensation Basis", stored:"Number (as text)", audit:"Number (as text)", ui:"Dropdown (Hourly or Salary)", validation:"Must match compensation basis list", notes:"", noteType:"" },
+  { cat:"Compensation", field:"Pay Effective Date", stored:"Date and time", audit:"Date and time", ui:"Date picker 01/01/1753–12/31/9999", validation:"Range: 1900–2079", notes:"", noteType:"" },
+  { cat:"Compensation", field:"Annual Base Salary", stored:"Number, ≤2 decimals", audit:"Number, ≤2 decimals", ui:"Number field, ≤18 digits", validation:"None", notes:"", noteType:"" },
+  { cat:"Compensation", field:"Hourly Rate", stored:"Number, ≤2 decimals", audit:"Number, ≤2 decimals", ui:"Number field, ≤18 digits", validation:"None", notes:"Only relevant when Compensation Basis is Hourly", noteType:"gray" },
+  { cat:"Compensation", field:"Hours Per Week", stored:"Text, ≤150 chars", audit:"Text, ≤150 chars", ui:"Number field, ≤18 chars", validation:"None", notes:"", noteType:"" },
+  { cat:"Compensation", field:"Annual Benefit Salary", stored:"Number, ≤2 decimals", audit:"Number, ≤2 decimals", ui:"Number field, ≤12 digits", validation:"None", notes:"", noteType:"" },
+  { cat:"Compensation", field:"Annual Benefit Salary Effective Date", stored:"Date and time", audit:"Date and time", ui:"Date picker 01/01/1901–12/31/2050", validation:"Range: 1900–2079", notes:"", noteType:"" },
+  { cat:"Employment", field:"Hire Date", stored:"Date", audit:"Date", ui:"Date picker 01/01/1900–06/06/2079", validation:"Range: 1900–2079", notes:"", noteType:"" },
+  { cat:"Employment", field:"Termination Date", stored:"Date", audit:"Date", ui:"Date picker 01/01/1900–01/01/2050", validation:"1900–2079; must be on or after hire date", notes:"", noteType:"" },
+  { cat:"Employment", field:"Termination Reason", stored:"Number (as text)", audit:"Number (as text)", ui:"6 preset buttons", validation:"Must match termination reason list", notes:"", noteType:"" },
+  { cat:"Employment", field:"Employment Type", stored:"Number (as text)", audit:"Number (as text)", ui:"Dropdown", validation:"Must match employment type list", notes:"", noteType:"" },
+  { cat:"Employment", field:"Is Full Time", stored:"Yes / No", audit:"Yes / No", ui:"Radio button", validation:"None", notes:"", noteType:"" },
+  { cat:"Employment", field:"Scheduled Hours", stored:"Number, ≤2 decimals", audit:"Number, ≤2 decimals", ui:"Number field, max 168", validation:"None", notes:"168 = max (total hours in a week)", noteType:"gray" },
+  { cat:"Org", field:"Business Unit", stored:"Number", audit:"Number", ui:"Dropdown", validation:"Must match client configured values", notes:"", noteType:"" },
+  { cat:"Org", field:"Class", stored:"Number", audit:"Number", ui:"Dropdown", validation:"Must match client configured values", notes:"", noteType:"" },
+  { cat:"Org", field:"Department", stored:"Number", audit:"Number", ui:"Dropdown", validation:"Must match client configured values", notes:"", noteType:"" },
+  { cat:"Org", field:"Division", stored:"Number", audit:"Number", ui:"Dropdown", validation:"Must match client configured values", notes:"", noteType:"" },
+  { cat:"Org", field:"Job Classification", stored:"Number", audit:"Number", ui:"Dropdown", validation:"Must match client configured values", notes:"Managed in EN only", noteType:"blue" },
+  { cat:"Org", field:"Job Title", stored:"Text, ≤100 chars", audit:"Text, ≤100 chars", ui:"Text field, ≤100 chars", validation:"Max 100 chars enforced", notes:"", noteType:"" },
+  { cat:"Org", field:"Office", stored:"Number", audit:"Number", ui:"Dropdown", validation:"Must match client configured values", notes:"", noteType:"" },
+  { cat:"Other", field:"Timeclock ID", stored:"Text, ≤50 chars", audit:"Text, ≤50 chars", ui:"Text field, ≤50 chars", validation:"None", notes:"Managed in EN only", noteType:"blue" },
+  { cat:"Other", field:"Worker Tax Status", stored:"Number (as text)", audit:"Number (as text)", ui:"Not in UI", validation:"Must match worker tax status list", notes:"Backend only; not visible in EN UI", noteType:"amber" },
+  { cat:"Other", field:"ACA Classification", stored:"Number (as text)", audit:"Number (as text)", ui:"Dropdown", validation:"Must match ACA classification list", notes:"", noteType:"" },
+];
+
+const catLabels = {
+  Personal:"Personal information", Contact:"Contact information",
+  Compensation:"Compensation", Employment:"Employment details",
+  Org:"Organizational details", Other:"Other"
+};
+const order = ["Personal","Contact","Compensation","Employment","Org","Other"];
+let activeFilter = "all";
+
+function esc(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function setFilter(cat){
+  activeFilter = cat;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.toggle('active', b.dataset.cat === cat));
+  render();
+}
+
+function render(){
+  const q = document.getElementById('search').value.toLowerCase();
+  const filtered = data.filter(r => {
+    const catMatch = activeFilter === 'all' || r.cat === activeFilter;
+    const textMatch = !q || Object.values(r).join(' ').toLowerCase().includes(q);
+    return catMatch && textMatch;
+  });
+
+  document.getElementById('field-count').textContent = filtered.length + ' field' + (filtered.length !== 1 ? 's' : '');
+
+  const grouped = {};
+  filtered.forEach(r => { if(!grouped[r.cat]) grouped[r.cat]=[]; grouped[r.cat].push(r); });
+
+  let html = '';
+  if(!filtered.length){
+    html = '<div class="no-results">No fields match your search.</div>';
+  } else {
+    order.forEach(cat => {
+      if(!grouped[cat]) return;
+      const rows = grouped[cat];
+      html += `<div class="section">
+        <div class="section-header">
+          <span class="section-title">${esc(catLabels[cat])}</span>
+          <span class="section-line"></span>
+          <span class="section-count">${rows.length} field${rows.length!==1?'s':''}</span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr>
+              <th class="col-field">Field</th>
+              <th class="col-stored">Stored as</th>
+              <th class="col-audit">Audit log</th>
+              <th class="col-ui">UI control</th>
+              <th class="col-val">Validation</th>
+              <th class="col-notes">Notes</th>
+            </tr></thead>
+            <tbody>`;
+      rows.forEach(r => {
+        let noteCell = '';
+        if(r.notes){
+          const cls = r.noteType ? `badge badge-${r.noteType}` : '';
+          noteCell = cls ? `<span class="${cls}">${esc(r.notes)}</span>` : `<span style="font-size:12px;color:var(--text-muted);">${esc(r.notes)}</span>`;
+        } else {
+          noteCell = '<span class="none">—</span>';
+        }
+        const val = r.validation && r.validation !== 'None'
+          ? `<span class="mono">${esc(r.validation)}</span>`
+          : '<span class="none">None</span>';
+        html += `<tr>
+          <td><span class="field-name">${esc(r.field)}</span></td>
+          <td class="mono">${esc(r.stored)}</td>
+          <td class="mono">${esc(r.audit)}</td>
+          <td class="mono">${esc(r.ui)}</td>
+          <td>${val}</td>
+          <td>${noteCell}</td>
+        </tr>`;
+      });
+      html += `</tbody></table></div></div>`;
+    });
+  }
+  document.getElementById('main').innerHTML = html;
+}
+
+render();
+</script>
+</body>
+</html>
