@@ -1,0 +1,1220 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EN API Interactive Demos · Training Lab</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #0d1b2a;
+  --navy-mid: #1a2e42;
+  --navy-light: #243d54;
+  --teal: #00b4a6;
+  --teal-dim: #008f84;
+  --green: #4caf50;
+  --green-dark: #2e7d32;
+  --green-light: #a5d6a7;
+  --green-pale: #e8f5e9;
+  --amber: #f5a623;
+  --amber-pale: #fffbeb;
+  --rose: #e8445a;
+  --violet: #7c5cbf;
+  --cream: #f7f4ef;
+  --cream-dark: #ede9e2;
+  --white: #ffffff;
+  --text: #1a2332;
+  --muted: #5a6475;
+  --border: #e2e8f0;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--cream);
+  color: var(--text);
+  line-height: 1.65;
+  font-size: 16px;
+}
+code, .mono { font-family: 'DM Mono', monospace; }
+
+/* ── HERO ── */
+.hero {
+  background: var(--navy);
+  padding: 60px 40px 50px;
+  position: relative; overflow: hidden;
+}
+.hero::before {
+  content: ''; position: absolute; top: -100px; right: -100px;
+  width: 420px; height: 420px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(0,180,166,.14) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-inner { max-width: 1100px; margin: 0 auto; position: relative; }
+.eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(0,180,166,.13); border: 1px solid rgba(0,180,166,.3);
+  color: var(--teal); font-family: 'DM Mono', monospace;
+  font-size: 11px; letter-spacing: 2.5px; text-transform: uppercase;
+  padding: 5px 14px; border-radius: 20px; margin-bottom: 20px;
+}
+.hero h1 {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(30px, 4.2vw, 48px); color: #fff; line-height: 1.15;
+  margin-bottom: 14px; max-width: 800px;
+}
+.hero h1 em { color: var(--teal); font-style: italic; }
+.hero-sub {
+  color: rgba(255,255,255,.55); font-size: 15px; max-width: 680px;
+  font-weight: 300;
+}
+
+/* ── DEMO TABS ── */
+.tabs-bar {
+  background: var(--navy-mid);
+  border-bottom: 1px solid rgba(255,255,255,.06);
+  position: sticky; top: 0; z-index: 100;
+}
+.tabs-inner { max-width: 1100px; margin: 0 auto; padding: 0 40px; display: flex; gap: 0; overflow-x: auto; }
+.tab {
+  padding: 16px 22px; cursor: pointer;
+  font-size: 13px; font-weight: 500; color: rgba(255,255,255,.45);
+  border-bottom: 2px solid transparent;
+  transition: color .2s, border-color .2s;
+  white-space: nowrap;
+  display: flex; align-items: center; gap: 9px;
+}
+.tab:hover { color: rgba(255,255,255,.8); }
+.tab.active { color: var(--teal); border-bottom-color: var(--teal); }
+.tab-num {
+  width: 22px; height: 22px; border-radius: 50%;
+  background: rgba(255,255,255,.08); color: rgba(255,255,255,.6);
+  font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 600;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.tab.active .tab-num { background: var(--teal); color: #fff; }
+
+/* ── MAIN ── */
+.main { max-width: 1100px; margin: 0 auto; padding: 48px 40px 80px; }
+
+.demo-panel { display: none; }
+.demo-panel.active { display: block; animation: fadeIn .35s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+.demo-header { margin-bottom: 28px; }
+.demo-label {
+  font-family: 'DM Mono', monospace; font-size: 11px;
+  letter-spacing: 2px; text-transform: uppercase; color: var(--teal-dim);
+  margin-bottom: 6px;
+}
+.demo-header h2 {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(24px, 3vw, 32px); color: var(--navy); line-height: 1.2;
+  margin-bottom: 10px;
+}
+.demo-lead {
+  font-size: 15px; color: var(--muted); max-width: 760px;
+  padding-left: 16px; border-left: 3px solid var(--teal);
+}
+
+/* ── DEMO 1: WEBHOOK SEQUENCE ── */
+.scene {
+  background: #fff; border-radius: 18px; padding: 28px 28px 24px;
+  box-shadow: 0 4px 18px rgba(0,0,0,.06); border: 1px solid var(--border);
+  margin-bottom: 24px;
+}
+
+.actors {
+  display: grid; grid-template-columns: 1fr auto 1fr;
+  gap: 0; align-items: stretch; margin-bottom: 26px;
+  position: relative;
+}
+.actor {
+  background: var(--cream); border-radius: 14px; padding: 18px 18px 16px;
+  border: 2px solid var(--cream-dark);
+  position: relative; transition: all .35s ease;
+}
+.actor.partner { border-color: rgba(245,166,35,.3); background: rgba(245,166,35,.04); }
+.actor.en { border-color: rgba(0,180,166,.3); background: rgba(0,180,166,.04); }
+.actor.active {
+  border-color: var(--teal); background: rgba(0,180,166,.12);
+  box-shadow: 0 0 0 4px rgba(0,180,166,.13);
+  transform: translateY(-2px);
+}
+.actor.partner.active {
+  border-color: var(--amber); background: rgba(245,166,35,.13);
+  box-shadow: 0 0 0 4px rgba(245,166,35,.13);
+}
+.actor-icon {
+  width: 36px; height: 36px; border-radius: 10px;
+  background: var(--white); display: flex; align-items: center; justify-content: center;
+  font-size: 18px; margin-bottom: 10px; border: 1.5px solid var(--cream-dark);
+}
+.actor.partner .actor-icon { border-color: rgba(245,166,35,.4); }
+.actor.en .actor-icon { border-color: rgba(0,180,166,.4); }
+.actor-tag {
+  font-family: 'DM Mono', monospace; font-size: 9.5px;
+  letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted);
+  margin-bottom: 3px;
+}
+.actor h4 { font-size: 15px; font-weight: 600; color: var(--navy); margin-bottom: 4px; }
+.actor p { font-size: 12.5px; color: var(--muted); line-height: 1.45; }
+
+.actor-state {
+  margin-top: 12px; padding-top: 10px; border-top: 1px dashed var(--cream-dark);
+  font-size: 11.5px; font-family: 'DM Mono', monospace; color: var(--muted);
+  min-height: 32px;
+}
+.state-line { margin-bottom: 3px; opacity: 0; transition: opacity .3s; }
+.state-line.show { opacity: 1; }
+.state-line .ok { color: var(--green-dark); font-weight: 600; }
+.state-line .pending { color: var(--amber); }
+.state-line .v { color: var(--teal-dim); font-weight: 500; }
+
+.center-arrow {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 0 14px; min-width: 80px; position: relative;
+}
+.arrow-line {
+  width: 100%; height: 2px; background: var(--cream-dark);
+  border-radius: 2px; position: relative; overflow: hidden;
+}
+.arrow-line.in-flight::after {
+  content: ''; position: absolute; top: 0; left: -30%; width: 30%; height: 100%;
+  background: linear-gradient(90deg, transparent, var(--teal), transparent);
+  animation: zip 1.1s ease-out;
+}
+.arrow-line.in-flight.reverse::after {
+  background: linear-gradient(90deg, transparent, var(--amber), transparent);
+  animation: zipReverse 1.1s ease-out;
+}
+@keyframes zip { from { left: -30%; } to { left: 100%; } }
+@keyframes zipReverse { from { left: 100%; } to { left: -30%; } }
+.arrow-label {
+  font-family: 'DM Mono', monospace; font-size: 10px;
+  color: var(--muted); margin-top: 6px; text-align: center;
+  min-height: 14px;
+}
+
+/* Step controls */
+.controls {
+  display: flex; align-items: center; gap: 14px; margin-bottom: 24px;
+  background: var(--navy); border-radius: 12px; padding: 14px 18px;
+}
+.btn {
+  background: var(--teal); color: #fff; border: none;
+  border-radius: 8px; padding: 10px 18px;
+  font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: all .15s;
+  display: inline-flex; align-items: center; gap: 7px;
+}
+.btn:hover { background: var(--teal-dim); transform: translateY(-1px); }
+.btn:disabled { opacity: .35; cursor: not-allowed; transform: none; }
+.btn.outline {
+  background: transparent; color: rgba(255,255,255,.7);
+  border: 1px solid rgba(255,255,255,.18);
+}
+.btn.outline:hover { background: rgba(255,255,255,.08); color: #fff; }
+.step-indicator {
+  flex: 1; font-family: 'DM Mono', monospace; font-size: 11.5px;
+  color: rgba(255,255,255,.45); letter-spacing: 1px;
+}
+.step-indicator strong { color: var(--teal); }
+
+.progress-rail {
+  display: flex; gap: 6px; margin-bottom: 22px;
+}
+.rail-step {
+  flex: 1; height: 5px; border-radius: 3px; background: var(--cream-dark);
+  position: relative; transition: background .3s;
+}
+.rail-step.done { background: var(--green); }
+.rail-step.current { background: var(--teal); animation: pulse 1.4s ease infinite; }
+@keyframes pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(0,180,166,.5); }
+  50% { box-shadow: 0 0 0 5px rgba(0,180,166,0); }
+}
+
+/* Step explanation */
+.step-detail {
+  background: var(--white); border-radius: 14px; overflow: hidden;
+  border: 1px solid var(--border); box-shadow: 0 2px 12px rgba(0,0,0,.04);
+  margin-bottom: 22px;
+}
+.step-detail-hdr {
+  background: var(--navy); padding: 14px 22px;
+  display: flex; align-items: center; gap: 12px;
+}
+.step-num {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: var(--teal); color: #fff;
+  font-family: 'DM Mono', monospace; font-size: 12px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+}
+.step-title { font-size: 14.5px; font-weight: 600; color: #fff; flex: 1; }
+.step-method {
+  font-family: 'DM Mono', monospace; font-size: 11px;
+  background: rgba(0,180,166,.18); color: var(--teal); border: 1px solid rgba(0,180,166,.3);
+  padding: 3px 9px; border-radius: 5px; font-weight: 600;
+}
+.step-method.get { background: rgba(76,175,80,.18); color: var(--green-light); border-color: rgba(76,175,80,.3); }
+
+.step-detail-body { padding: 20px 22px; }
+.step-narrative {
+  font-size: 14px; color: var(--text); margin-bottom: 16px; line-height: 1.65;
+}
+.step-narrative strong { color: var(--navy); }
+
+.req-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+}
+.req-card {
+  background: var(--cream); border-radius: 10px; padding: 14px 16px;
+  border: 1px solid var(--cream-dark);
+}
+.req-card-label {
+  font-family: 'DM Mono', monospace; font-size: 9.5px;
+  letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted);
+  margin-bottom: 8px;
+}
+.req-card pre {
+  font-family: 'DM Mono', monospace; font-size: 11.5px;
+  color: var(--navy); white-space: pre-wrap; word-break: break-all;
+  line-height: 1.55;
+}
+.req-card .key { color: var(--violet); }
+.req-card .str { color: var(--teal-dim); }
+.req-card .num { color: var(--amber-dim, #9a6e00); }
+.req-card .url { color: var(--teal-dim); word-break: break-all; }
+
+.note-box {
+  margin-top: 16px; padding: 11px 14px;
+  background: var(--amber-pale); border: 1px solid #fde68a;
+  border-radius: 8px; font-size: 13px; color: #78350f;
+}
+.note-box strong { color: #92400e; font-weight: 600; }
+.note-box.teal-note {
+  background: rgba(0,180,166,.07); border-color: rgba(0,180,166,.25);
+  color: var(--teal-dim);
+}
+.note-box.teal-note strong { color: var(--navy); }
+
+/* Console log (Demo 1 result) */
+.console {
+  background: #0a0e1a; border-radius: 12px; padding: 16px 20px;
+  font-family: 'DM Mono', monospace; font-size: 12px;
+  color: #a5f3fc; line-height: 1.7;
+  min-height: 100px; max-height: 280px; overflow-y: auto;
+  border: 1px solid #1e293b;
+}
+.console-line { display: block; opacity: 0; transform: translateY(4px); transition: opacity .3s, transform .3s; }
+.console-line.show { opacity: 1; transform: none; }
+.console-time { color: #475569; }
+.console-arrow.out { color: var(--amber); font-weight: 600; }
+.console-arrow.in { color: var(--teal); font-weight: 600; }
+.console-status.ok { color: #4ade80; }
+.console-status.err { color: var(--rose); }
+.console-key { color: #f0abfc; }
+.console-val { color: #a5f3fc; }
+.console-comment { color: #64748b; font-style: italic; }
+
+/* ── DEMO 2: REQUEST BUILDER ── */
+.builder-grid {
+  display: grid; grid-template-columns: 1fr 1.2fr; gap: 18px;
+  margin-bottom: 24px;
+}
+@media (max-width: 800px) { .builder-grid { grid-template-columns: 1fr; } }
+
+.builder-form {
+  background: #fff; border-radius: 14px; padding: 22px;
+  border: 1px solid var(--border); box-shadow: 0 2px 12px rgba(0,0,0,.04);
+}
+.field-group { margin-bottom: 14px; }
+.field-label {
+  font-family: 'DM Mono', monospace; font-size: 10px;
+  letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted);
+  margin-bottom: 6px; display: block;
+}
+.field-row { display: flex; gap: 8px; }
+.method-select, .field-input, .field-select {
+  font-family: 'DM Mono', monospace; font-size: 13px;
+  padding: 9px 12px; border-radius: 7px; border: 1.5px solid var(--cream-dark);
+  background: #fff; color: var(--navy);
+  transition: border-color .15s;
+}
+.field-input { flex: 1; }
+.method-select:focus, .field-input:focus, .field-select:focus {
+  outline: none; border-color: var(--teal);
+}
+.method-select { font-weight: 600; min-width: 90px; }
+.scope-toggles {
+  display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px;
+}
+.scope-chip {
+  padding: 5px 11px; border-radius: 18px;
+  background: var(--cream); border: 1.5px solid var(--cream-dark);
+  font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted);
+  cursor: pointer; user-select: none; transition: all .15s;
+}
+.scope-chip.active {
+  background: rgba(0,180,166,.12); border-color: var(--teal); color: var(--teal-dim);
+  font-weight: 600;
+}
+
+.builder-result {
+  background: var(--navy); border-radius: 14px; padding: 22px;
+  color: #fff;
+}
+.result-status {
+  display: flex; align-items: center; gap: 12px; margin-bottom: 14px;
+  padding-bottom: 14px; border-bottom: 1px solid rgba(255,255,255,.08);
+}
+.status-pill {
+  font-family: 'DM Mono', monospace; font-size: 12px; font-weight: 700;
+  padding: 4px 12px; border-radius: 6px;
+}
+.status-pill.s200 { background: rgba(76,175,80,.2); color: #86efac; border: 1px solid rgba(76,175,80,.4); }
+.status-pill.s400 { background: rgba(245,166,35,.2); color: #fcd34d; border: 1px solid rgba(245,166,35,.4); }
+.status-pill.s401 { background: rgba(232,68,90,.2); color: #fca5a5; border: 1px solid rgba(232,68,90,.4); }
+.status-pill.s403 { background: rgba(124,92,191,.2); color: #c4b5fd; border: 1px solid rgba(124,92,191,.4); }
+.status-pill.s404 { background: rgba(232,68,90,.2); color: #fca5a5; border: 1px solid rgba(232,68,90,.4); }
+.status-msg { font-size: 13px; color: rgba(255,255,255,.75); }
+.result-explain {
+  font-size: 13px; color: rgba(255,255,255,.65); margin-bottom: 14px; line-height: 1.6;
+}
+.result-explain strong { color: var(--teal); font-weight: 600; }
+.result-body {
+  background: #0a0e1a; border-radius: 8px; padding: 14px 16px;
+  font-family: 'DM Mono', monospace; font-size: 12px; line-height: 1.6;
+  color: #a5f3fc; overflow-x: auto;
+  border: 1px solid #1e293b;
+}
+.result-body .key { color: #f0abfc; }
+.result-body .str { color: #86efac; }
+.result-body .num { color: #fcd34d; }
+.result-body .err { color: #fca5a5; }
+
+/* ── DEMO 3: ERROR DECODER ── */
+.error-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px;
+  margin-bottom: 22px;
+}
+.err-card {
+  background: #fff; border-radius: 12px; padding: 16px 16px 14px;
+  border: 1.5px solid var(--cream-dark);
+  cursor: pointer; transition: all .2s;
+  text-align: left;
+  display: flex; flex-direction: column; gap: 6px;
+}
+.err-card:hover {
+  border-color: var(--teal); transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0,180,166,.12);
+}
+.err-card.selected {
+  border-color: var(--teal); background: rgba(0,180,166,.06);
+  box-shadow: 0 4px 14px rgba(0,180,166,.15);
+}
+.err-card-top {
+  display: flex; align-items: baseline; gap: 8px;
+}
+.err-code {
+  font-family: 'DM Serif Display', serif;
+  font-size: 28px; line-height: 1;
+}
+.err-code.c401 { color: var(--rose); }
+.err-code.c403 { color: var(--amber); }
+.err-code.c400 { color: var(--violet); }
+.err-code.c404 { color: var(--rose); }
+.err-code.c200, .err-code.c201 { color: var(--green); }
+.err-code.c500 { color: #db2777; }
+.err-code.c503 { color: #9333ea; }
+.err-card-endpoint {
+  font-family: 'DM Mono', monospace; font-size: 10px;
+  color: var(--muted); letter-spacing: .3px;
+}
+.err-card-name {
+  font-size: 13px; font-weight: 600; color: var(--navy);
+  line-height: 1.35;
+}
+.class-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 600;
+  letter-spacing: .5px; text-transform: uppercase;
+  padding: 3px 8px; border-radius: 6px; align-self: flex-start;
+  margin-top: 2px;
+}
+.class-badge.in-sync { background: rgba(33,161,121,.12); color: #167a5c; border: 1px solid rgba(33,161,121,.28); }
+.class-badge.needs-action { background: rgba(232,68,90,.1); color: var(--rose); border: 1px solid rgba(232,68,90,.25); }
+.class-badge.were-on-it { background: rgba(124,92,191,.1); color: var(--violet); border: 1px solid rgba(124,92,191,.28); }
+.class-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+.err-detail {
+  background: #fff; border-radius: 14px; padding: 22px 26px;
+  border: 1px solid var(--border); box-shadow: 0 2px 12px rgba(0,0,0,.04);
+  min-height: 140px;
+}
+.err-detail.empty {
+  display: flex; align-items: center; justify-content: center;
+  color: var(--muted); font-style: italic; font-size: 14px;
+}
+.err-detail-head {
+  display: flex; align-items: baseline; gap: 14px; margin-bottom: 4px;
+  flex-wrap: wrap;
+}
+.err-detail-head .big-code {
+  font-family: 'DM Serif Display', serif; font-size: 32px; line-height: 1;
+}
+.err-detail-head .big-name {
+  font-size: 17px; font-weight: 600; color: var(--navy); flex: 1;
+}
+.err-detail-meta {
+  font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted);
+  letter-spacing: .5px; padding-bottom: 14px; margin-bottom: 12px;
+  border-bottom: 1px solid var(--cream-dark);
+}
+.err-section { margin-bottom: 14px; }
+.err-section:last-child { margin-bottom: 0; }
+.err-section-label {
+  font-family: 'DM Mono', monospace; font-size: 10px;
+  letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted);
+  margin-bottom: 5px;
+}
+.err-section-body { font-size: 13.5px; color: var(--text); line-height: 1.6; }
+.err-section-body code {
+  background: var(--cream); padding: 1px 6px; border-radius: 4px;
+  font-family: 'DM Mono', monospace; font-size: 12px;
+  color: var(--teal-dim);
+}
+
+/* Footer */
+footer {
+  background: var(--navy); padding: 32px 40px; text-align: center; margin-top: 60px;
+}
+footer p { color: rgba(255,255,255,.4); font-size: 12.5px; }
+footer strong { color: rgba(255,255,255,.65); }
+
+@media (max-width: 700px) {
+  .actors { grid-template-columns: 1fr; gap: 14px; }
+  .center-arrow { padding: 8px 0; min-width: 0; flex-direction: row; }
+  .arrow-line { width: 100%; }
+  .req-grid { grid-template-columns: 1fr; }
+  .main { padding: 32px 20px 60px; }
+  .hero { padding: 44px 20px 36px; }
+  .tabs-inner { padding: 0 16px; }
+}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="eyebrow">⚡ Training Lab · Interactive Demos</div>
+    <h1>See the API in motion.<br><em>Click. Watch. Understand.</em></h1>
+    <p class="hero-sub">Three hands-on demos that bring the foundational training to life — using EN's actual endpoints, headers, and payloads from the Partner Implementation Guide. No backend required; everything runs locally so you can pause, replay, and break things on purpose.</p>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs-bar">
+  <div class="tabs-inner">
+    <div class="tab active" data-panel="d1"><span class="tab-num">1</span>Webhook Sequence</div>
+    <div class="tab" data-panel="d2"><span class="tab-num">2</span>Request Builder</div>
+    <div class="tab" data-panel="d3"><span class="tab-num">3</span>Error Decoder</div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<main class="main">
+
+<!-- ══════════════════════════════════════════
+     DEMO 1 — WEBHOOK SEQUENCE
+══════════════════════════════════════════ -->
+<div class="demo-panel active" id="d1">
+  <div class="demo-header">
+    <div class="demo-label">Demo 01 · The full inbound flow</div>
+    <h2>Webhook Sequence: Partner → EN → Get Employee</h2>
+    <p class="demo-lead">Walk through the exact 5-step handshake from the Implementation Guide. The partner authenticates with EN, posts a thin notification, EN authenticates back to the partner, and EN fetches the full record. Each step shows the real endpoint, headers, and payload.</p>
+  </div>
+
+  <div class="scene">
+    <!-- Two actors with a flowing arrow -->
+    <div class="actors">
+      <div class="actor partner" id="actor-partner">
+        <div class="actor-icon">🏢</div>
+        <div class="actor-tag">Payroll Partner</div>
+        <h4>UKG (example)</h4>
+        <p>HR admin just updated employee EMP-10042's address.</p>
+        <div class="actor-state" id="state-partner"></div>
+      </div>
+      <div class="center-arrow">
+        <div class="arrow-line" id="arrow-line"></div>
+        <div class="arrow-label" id="arrow-label">&nbsp;</div>
+      </div>
+      <div class="actor en" id="actor-en">
+        <div class="actor-icon">🧭</div>
+        <div class="actor-tag">Employee Navigator</div>
+        <h4>EN Identity + API</h4>
+        <p>Waiting for partner notifications on the QA environment.</p>
+        <div class="actor-state" id="state-en"></div>
+      </div>
+    </div>
+
+    <!-- Progress rail -->
+    <div class="progress-rail" id="rail">
+      <div class="rail-step" data-step="1"></div>
+      <div class="rail-step" data-step="2"></div>
+      <div class="rail-step" data-step="3"></div>
+      <div class="rail-step" data-step="4"></div>
+      <div class="rail-step" data-step="5"></div>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls">
+      <button class="btn" id="btn-next">▶ Next Step</button>
+      <button class="btn outline" id="btn-reset">↺ Reset</button>
+      <div class="step-indicator">Step <strong id="step-num">0</strong> of 5 · <span id="step-name">Click "Next Step" to begin</span></div>
+    </div>
+
+    <!-- Step detail -->
+    <div class="step-detail" id="step-detail" style="display:none">
+      <div class="step-detail-hdr">
+        <div class="step-num" id="sd-num">1</div>
+        <div class="step-title" id="sd-title">Step title</div>
+        <div class="step-method" id="sd-method">POST</div>
+      </div>
+      <div class="step-detail-body">
+        <div class="step-narrative" id="sd-narrative"></div>
+        <div class="req-grid" id="sd-grid"></div>
+        <div id="sd-note"></div>
+      </div>
+    </div>
+
+    <!-- Console log -->
+    <div style="margin-top:18px">
+      <div class="vault-title" style="margin-bottom:8px">Live Network Log</div>
+      <div class="console" id="console"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     DEMO 2 — REQUEST BUILDER
+══════════════════════════════════════════ -->
+<div class="demo-panel" id="d2">
+  <div class="demo-header">
+    <div class="demo-label">Demo 02 · Build a request, see the response</div>
+    <h2>Request Builder — Try Breaking the API</h2>
+    <p class="demo-lead">Configure three things about an inbound notification call from UKG to EN, then send it. Each setting maps to one specific kind of failure — flip them on purpose and watch how the status code changes.</p>
+  </div>
+
+  <div class="builder-grid">
+    <!-- Form -->
+    <div class="builder-form">
+      <div style="font-family:'DM Mono',monospace; font-size:11.5px; color:var(--muted); background:var(--cream); padding:10px 12px; border-radius:8px; margin-bottom:18px; line-height:1.55">
+        <span style="color:var(--teal-dim); font-weight:600">POST</span> qa.employeenavigator.net<br>
+        <span style="opacity:.7">/API/Payroll/companies/AMS123/employees/EMP-10042/notification</span>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">1 · Authorization header</label>
+        <select class="field-select" id="b-auth" style="width:100%">
+          <option value="valid">✓ Bearer eyJhbGc... (fresh token)</option>
+          <option value="expired">⚠ Bearer eyJhbGc... (expired)</option>
+          <option value="none">✗ no Authorization header</option>
+        </select>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">2 · Partner API enabled for this client?</label>
+        <select class="field-select" id="b-partner" style="width:100%">
+          <option value="enabled">✓ Yes — UKG has enabled the integration</option>
+          <option value="disabled">✗ No — UKG has not enabled the API yet</option>
+        </select>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">3 · Request body</label>
+        <select class="field-select" id="b-body" style="width:100%">
+          <option value="valid">✓ Valid: companyIdentifier + employeeIdentifier</option>
+          <option value="missing-emp">⚠ Missing employeeIdentifier</option>
+          <option value="empty">✗ Empty body</option>
+        </select>
+      </div>
+
+      <button class="btn" id="b-send" style="width:100%; justify-content:center; margin-top:10px">Send Request →</button>
+    </div>
+
+    <!-- Result -->
+    <div class="builder-result">
+      <div class="result-status" id="r-status">
+        <span class="status-pill s200" id="r-pill">— —</span>
+        <span class="status-msg" id="r-msg">Configure your request, then click Send.</span>
+      </div>
+      <div class="result-explain" id="r-explain">
+        Each setting maps to one check the API performs. Flip one to "fail" and you'll see exactly which check failed — and which status code that produces.
+      </div>
+      <div class="result-body" id="r-body">// Response body will appear here</div>
+    </div>
+  </div>
+
+  <div class="note-box teal-note">
+    <strong>The shortcut for triage:</strong> 401 = something wrong with the token (auth). 403 = partner hasn't enabled their side of the integration (no access to their system). 400 = the request body is malformed or rejected for data reasons. Recognizing this trio at a glance is most of the job.
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     DEMO 3 — ERROR DECODER
+══════════════════════════════════════════ -->
+<div class="demo-panel" id="d3">
+  <div class="demo-header">
+    <div class="demo-label">Demo 03 · Triage faster</div>
+    <h2>Error Decoder — Real EN Payroll Errors</h2>
+    <p class="demo-lead">Each card below is a real entry from EN's transmission log rules — the same scenarios that surface on the Integration Health Dashboard. Click one to see the status code, EN's classification (In Sync / Needs Action / We're On It), and the exact instruction your broker or HR admin will see in the UI.</p>
+  </div>
+
+  <div class="error-grid">
+    <div class="err-card" data-err="ok-201">
+      <div class="err-card-top">
+        <span class="err-code c201">201</span>
+        <span class="err-card-endpoint">Payroll Deduction</span>
+      </div>
+      <div class="err-card-name">Successful deduction created</div>
+      <span class="class-badge in-sync"><span class="class-dot"></span>In Sync</span>
+    </div>
+
+    <div class="err-card" data-err="ukg-bad-code">
+      <div class="err-card-top">
+        <span class="err-code c400">400</span>
+        <span class="err-card-endpoint">Employee Deductions</span>
+      </div>
+      <div class="err-card-name">Bad code — UKG</div>
+      <span class="class-badge needs-action"><span class="class-dot"></span>Needs Action</span>
+    </div>
+
+    <div class="err-card" data-err="bad-address">
+      <div class="err-card-top">
+        <span class="err-code c400">400</span>
+        <span class="err-card-endpoint">Update Employee</span>
+      </div>
+      <div class="err-card-name">Bad address — Paylocity</div>
+      <span class="class-badge needs-action"><span class="class-dot"></span>Needs Action</span>
+    </div>
+
+    <div class="err-card" data-err="forbidden">
+      <div class="err-card-top">
+        <span class="err-code c403">403</span>
+        <span class="err-card-endpoint">Payroll Deduction</span>
+      </div>
+      <div class="err-card-name">API not enabled by partner</div>
+      <span class="class-badge needs-action"><span class="class-dot"></span>Needs Action</span>
+    </div>
+
+    <div class="err-card" data-err="not-found">
+      <div class="err-card-top">
+        <span class="err-code c404">404</span>
+        <span class="err-card-endpoint">Get Employee</span>
+      </div>
+      <div class="err-card-name">Resource not found</div>
+      <span class="class-badge needs-action"><span class="class-dot"></span>Needs Action</span>
+    </div>
+
+    <div class="err-card" data-err="auth-failed">
+      <div class="err-card-top">
+        <span class="err-code c500">500</span>
+        <span class="err-card-endpoint">Get Employee</span>
+      </div>
+      <div class="err-card-name">Authentication with partner failed</div>
+      <span class="class-badge were-on-it"><span class="class-dot"></span>We're On It</span>
+    </div>
+
+    <div class="err-card" data-err="partner-down">
+      <div class="err-card-top">
+        <span class="err-code c503">503</span>
+        <span class="err-card-endpoint">Update Employee</span>
+      </div>
+      <div class="err-card-name">Partner API unavailable</div>
+      <span class="class-badge were-on-it"><span class="class-dot"></span>We're On It</span>
+    </div>
+  </div>
+
+  <div class="err-detail empty" id="err-detail">
+    👆 Click any scenario above to see the full breakdown.
+  </div>
+</div>
+
+</main>
+
+<footer>
+  <p><strong>EN API Training Lab</strong> · Interactive Demos · Companion to the Foundational Training Guide</p>
+  <p style="margin-top:6px">Endpoints, headers, and payloads sourced from the Partner Implementation Guide for Integrated Payroll.</p>
+</footer>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// TAB SWITCHING
+// ═══════════════════════════════════════════════════════════════
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.demo-panel').forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById(tab.dataset.panel).classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+});
+
+// ═══════════════════════════════════════════════════════════════
+// DEMO 1 — WEBHOOK SEQUENCE
+// ═══════════════════════════════════════════════════════════════
+const STEPS = [
+  {
+    num: 1,
+    title: "Partner authenticates with EN's identity server",
+    method: "POST",
+    direction: "right",
+    arrowLabel: "POST /identity/connect/token",
+    narrative: "UKG needs to send EN a notification, but APIs are stateless — they need a fresh access token first. UKG POSTs its client credentials to EN's identity endpoint to receive a bearer token valid for 1 hour (3600 seconds).",
+    requestUrl: "https://identity.employeenavigator.net/identity/connect/token",
+    requestBody: `<span class="key">grant_type</span>=client_credentials
+<span class="key">client_id</span>=UKGIntegration
+<span class="key">client_secret</span>=•••••••••••
+<span class="key">scope</span>=PayrollNotificationApi EnApi`,
+    responseStatus: "200 OK",
+    responseBody: `{
+  <span class="key">"access_token"</span>: <span class="str">"eyJhbGciOiJSUzI1NiIs..."</span>,
+  <span class="key">"token_type"</span>: <span class="str">"Bearer"</span>,
+  <span class="key">"expires_in"</span>: <span class="num">3600</span>
+}`,
+    note: { type: 'teal', text: '<strong>Real EN endpoint:</strong> This token URL is exactly what partners use in the QA sandbox per the Implementation Guide. Production swaps it for <code>www.employeenavigator.com/identity/connect/token</code>.' },
+    partnerState: '<div class="state-line show"><span class="ok">●</span> Holds: client_id + client_secret</div><div class="state-line show"><span class="v">→ requesting access token</span></div>',
+    enState: '<div class="state-line show"><span class="ok">●</span> Identity server validates credentials</div><div class="state-line show"><span class="v">← issuing 1hr bearer token</span></div>',
+    consoleLines: [
+      { time: '14:23:01.124', dir: 'out', text: 'POST identity.employeenavigator.net/identity/connect/token' },
+      { time: '14:23:01.245', dir: 'in', text: '<span class="console-status ok">200 OK</span> · access_token=eyJhbGc...  expires_in=3600' }
+    ]
+  },
+  {
+    num: 2,
+    title: "Partner POSTs the change notification to EN",
+    method: "POST",
+    direction: "right",
+    arrowLabel: "POST /API/Payroll/.../notification",
+    narrative: "With a valid token in hand, UKG sends a <strong>thin webhook</strong> to EN's notification endpoint. Per the guide, the body contains only <code>companyIdentifier</code> and <code>employeeIdentifier</code> — no PII, no field-level details. EN's job is just to learn that <em>something</em> changed for this person.",
+    requestUrl: "https://qa.employeenavigator.net/API/Payroll/companies/AMS123/employees/EMP-10042/notification",
+    requestBody: `<span class="comment">// Headers</span>
+<span class="key">Content-Type</span>: application/json
+<span class="key">Accept</span>: */*
+<span class="key">Authorization</span>: Bearer eyJhbGc...
+<span class="key">Api-Version</span>: 3.0
+
+<span class="comment">// Body</span>
+{
+  <span class="key">"companyIdentifier"</span>: <span class="str">"AMS123"</span>,
+  <span class="key">"employeeIdentifier"</span>: <span class="str">"EMP-10042"</span>
+}`,
+    responseStatus: "201 Created",
+    responseBody: `{
+  <span class="key">"status"</span>: <span class="str">"created"</span>,
+  <span class="key">"notificationId"</span>: <span class="str">"ntf_8f3a91"</span>
+}`,
+    note: { type: 'amber', text: '<strong>Thin event pattern:</strong> The webhook does not say <em>what</em> changed — name, address, comp? EN doesn\'t know yet. That\'s intentional. The next steps will fetch the full record so EN gets authoritative current data, not a snapshot.' },
+    partnerState: '<div class="state-line show"><span class="ok">●</span> Token: eyJhbGc... (valid)</div><div class="state-line show"><span class="v">→ posting thin webhook</span></div>',
+    enState: '<div class="state-line show"><span class="ok">●</span> Token validated</div><div class="state-line show"><span class="ok">●</span> Notification created (ntf_8f3a91)</div>',
+    consoleLines: [
+      { time: '14:23:01.401', dir: 'out', text: 'POST qa.employeenavigator.net/API/Payroll/companies/AMS123/employees/EMP-10042/notification' },
+      { time: '14:23:01.402', dir: 'out', text: '  Authorization: Bearer eyJhbGc...   Api-Version: 3.0' },
+      { time: '14:23:01.518', dir: 'in', text: '<span class="console-status ok">201 Created</span> · notificationId=ntf_8f3a91' }
+    ]
+  },
+  {
+    num: 3,
+    title: "EN creates the internal notification & resolves identifiers",
+    method: "internal",
+    direction: "none",
+    arrowLabel: "EN internal processing",
+    narrative: "EN receives the webhook and looks up the identifiers. <code>AMS123</code> resolves to the matching EN client and Subscriber Group. <code>EMP-10042</code> resolves to the EN employee record. EN now knows <em>who</em> needs to be re-fetched, and queues an internal job to call back to UKG.",
+    requestUrl: "(internal — no network call)",
+    requestBody: `<span class="comment">// EN internal lookup</span>
+<span class="key">CompanyIdentifier</span>: AMS123 → EN Client #4471
+<span class="key">EmployeeIdentifier</span>: EMP-10042 → EN Employee #91823
+<span class="key">SubscriberGroup</span>: matched ✓
+<span class="key">action</span>: queue Get Employee fetch`,
+    responseStatus: "—",
+    responseBody: `<span class="comment">// EN internal state</span>
+fetch_queue:
+  - employee_id: 91823
+    partner: ukg
+    triggered_by: ntf_8f3a91
+    status: <span class="str">"pending"</span>`,
+    note: { type: 'teal', text: '<strong>What if the lookup fails?</strong> If <code>companyIdentifier</code> or <code>employeeIdentifier</code> doesn\'t match anything in EN, the notification is flagged for analyst review on the Integration Health Dashboard rather than being silently dropped.' },
+    partnerState: '<div class="state-line show"><span class="ok">●</span> Webhook delivered</div><div class="state-line show"><span class="v">⏳ awaiting EN\'s Get Employee</span></div>',
+    enState: '<div class="state-line show"><span class="ok">●</span> AMS123 → Client #4471</div><div class="state-line show"><span class="ok">●</span> EMP-10042 → Employee #91823</div><div class="state-line show"><span class="v">→ queueing fetch</span></div>',
+    consoleLines: [
+      { time: '14:23:01.520', dir: 'internal', text: '<span class="console-comment">// EN internal: resolving identifiers...</span>' },
+      { time: '14:23:01.531', dir: 'internal', text: '<span class="console-comment">// match: AMS123 → client_id=4471, employee_id=91823</span>' },
+      { time: '14:23:01.542', dir: 'internal', text: '<span class="console-comment">// queued Get Employee for partner=ukg</span>' }
+    ]
+  },
+  {
+    num: 4,
+    title: "EN authenticates with the partner's token endpoint",
+    method: "POST",
+    direction: "left",
+    arrowLabel: "POST partner.com/api/rest/token",
+    narrative: "Now EN needs to call UKG's API. Per the guide, this requires its own OAuth handshake — EN POSTs to the partner's token endpoint using <code>client_credentials</code> with EN's API key/secret. Note the <code>Content-Type</code> here is <code>application/x-www-form-urlencoded</code>, distinct from EN's identity endpoint which accepts JSON.",
+    requestUrl: "https://api.ukg.com/api/rest/token",
+    requestBody: `<span class="comment">// Headers</span>
+<span class="key">Content-Type</span>: application/x-www-form-urlencoded
+<span class="key">Accept</span>: application/json
+
+<span class="comment">// Body</span>
+<span class="key">grant_type</span>=client_credentials
+<span class="key">client_id</span>=EmpNavigator
+<span class="key">client_secret</span>=•••••••••••`,
+    responseStatus: "200 OK",
+    responseBody: `{
+  <span class="key">"access_token"</span>: <span class="str">"abc123XYZ-partner-token..."</span>,
+  <span class="key">"token_type"</span>: <span class="str">"Bearer"</span>,
+  <span class="key">"expires_in"</span>: <span class="num">3600</span>
+}`,
+    note: { type: 'amber', text: '<strong>Two separate token contracts:</strong> The partner has a token to call EN (Step 1). EN has its own, completely separate token to call the partner (this step). They are not interchangeable. Each system holds its own credentials and mints its own short-lived tokens.' },
+    partnerState: '<div class="state-line show"><span class="ok">●</span> Validating EN\'s credentials</div><div class="state-line show"><span class="v">← issuing token to EN</span></div>',
+    enState: '<div class="state-line show"><span class="ok">●</span> Sent EN\'s client_id/secret</div><div class="state-line show"><span class="ok">●</span> Received partner token (1hr)</div>',
+    consoleLines: [
+      { time: '14:23:01.612', dir: 'out', text: '<span class="console-arrow out">→</span> POST api.ukg.com/api/rest/token' },
+      { time: '14:23:01.613', dir: 'out', text: '   Content-Type: application/x-www-form-urlencoded' },
+      { time: '14:23:01.781', dir: 'in', text: '<span class="console-status ok">200 OK</span> · partner access_token received  expires_in=3600' }
+    ]
+  },
+  {
+    num: 5,
+    title: "EN calls Get Employee using the partner's token",
+    method: "GET",
+    direction: "left",
+    arrowLabel: "GET /employee-profile-configuration",
+    narrative: "Last step. EN calls <strong>Get Employee Profile</strong> on the partner with its newly minted bearer token. UKG returns the full, current record — name, address, DOB, comp, hire date, everything. EN then validates for PII conflicts and writes the update. Total elapsed time from initial change to EN sync: ~45–60 seconds.",
+    requestUrl: "https://api.ukg.com/payroll/companies/AMS123/employee/EMP-10042/employee-profile-configuration",
+    requestBody: `<span class="comment">// Headers</span>
+<span class="key">Authorization</span>: Bearer abc123XYZ-partner-token...
+<span class="key">Accept</span>: application/json
+
+<span class="comment">// GET — no body</span>`,
+    responseStatus: "200 OK",
+    responseBody: `{
+  <span class="key">"employeeIdentifier"</span>: <span class="str">"EMP-10042"</span>,
+  <span class="key">"firstName"</span>: <span class="str">"Jordan"</span>,
+  <span class="key">"lastName"</span>: <span class="str">"Reyes"</span>,
+  <span class="key">"dateOfBirth"</span>: <span class="str">"1989-04-12"</span>,
+  <span class="key">"address"</span>: {
+    <span class="key">"line1"</span>: <span class="str">"4218 Maple Ridge Dr"</span>,
+    <span class="key">"city"</span>: <span class="str">"Austin"</span>,
+    <span class="key">"state"</span>: <span class="str">"TX"</span>,
+    <span class="key">"zip"</span>: <span class="str">"78745"</span>
+  },
+  <span class="key">"compensation"</span>: { <span class="key">"amount"</span>: <span class="num">85000</span>, <span class="key">"frequency"</span>: <span class="str">"Annual"</span> }
+}`,
+    note: { type: 'teal', text: '<strong>Thin webhook + Get Employee:</strong> This is the pattern. The webhook said "something changed" — only now does EN find out it was the address (Maple Ridge Dr is new). EN compares this to its existing record, validates no PII conflict, and writes the update. Done.' },
+    partnerState: '<div class="state-line show"><span class="ok">●</span> Returning full employee record</div><div class="state-line show"><span class="ok">●</span> Sync complete</div>',
+    enState: '<div class="state-line show"><span class="ok">●</span> Received full record</div><div class="state-line show"><span class="ok">●</span> No PII conflicts</div><div class="state-line show"><span class="ok">●</span> EN updated ✓</div>',
+    consoleLines: [
+      { time: '14:23:01.812', dir: 'out', text: '<span class="console-arrow out">→</span> GET api.ukg.com/payroll/companies/AMS123/employee/EMP-10042/employee-profile-configuration' },
+      { time: '14:23:01.813', dir: 'out', text: '   Authorization: Bearer abc123XYZ...' },
+      { time: '14:23:01.964', dir: 'in', text: '<span class="console-status ok">200 OK</span> · 1.2KB · employee=Jordan Reyes  address updated' },
+      { time: '14:23:02.011', dir: 'internal', text: '<span class="console-comment">// EN validated, no PII conflict, record written</span>' },
+      { time: '14:23:02.012', dir: 'internal', text: '<span class="console-comment">// ✓ Total elapsed: 888ms (well within 45-60s target)</span>' }
+    ]
+  }
+];
+
+let currentStep = 0;
+
+function renderStep(idx) {
+  if (idx < 0 || idx > STEPS.length) return;
+
+  // Update progress rail
+  document.querySelectorAll('.rail-step').forEach((r, i) => {
+    r.classList.remove('done', 'current');
+    if (i < idx) r.classList.add('done');
+    if (i === idx - 1) r.classList.add('current');
+  });
+
+  // Update step indicator
+  document.getElementById('step-num').textContent = idx;
+  if (idx === 0) {
+    document.getElementById('step-name').textContent = 'Click "Next Step" to begin';
+    document.getElementById('step-detail').style.display = 'none';
+    document.getElementById('actor-partner').classList.remove('active');
+    document.getElementById('actor-en').classList.remove('active');
+    document.getElementById('state-partner').innerHTML = '';
+    document.getElementById('state-en').innerHTML = '';
+    document.getElementById('arrow-label').textContent = '\u00A0';
+    document.getElementById('console').innerHTML = '';
+    document.getElementById('btn-next').textContent = '▶ Start';
+    document.getElementById('btn-next').disabled = false;
+    return;
+  }
+
+  const step = STEPS[idx - 1];
+  document.getElementById('step-name').textContent = step.title;
+
+  // Animate arrow direction
+  const arrowLine = document.getElementById('arrow-line');
+  arrowLine.classList.remove('in-flight', 'reverse');
+  void arrowLine.offsetWidth; // restart animation
+  if (step.direction === 'right') {
+    arrowLine.classList.add('in-flight');
+  } else if (step.direction === 'left') {
+    arrowLine.classList.add('in-flight', 'reverse');
+  }
+  document.getElementById('arrow-label').textContent = step.arrowLabel;
+
+  // Highlight actors: EN is always involved; partner is highlighted on every
+  // step except internal-only steps (e.g., EN's identifier resolution).
+  document.getElementById('actor-en').classList.add('active');
+  document.getElementById('actor-partner').classList.toggle('active', step.method !== 'internal');
+
+  // Update actor states
+  document.getElementById('state-partner').innerHTML = step.partnerState;
+  document.getElementById('state-en').innerHTML = step.enState;
+
+  // Show step detail
+  const detail = document.getElementById('step-detail');
+  detail.style.display = 'block';
+  document.getElementById('sd-num').textContent = step.num;
+  document.getElementById('sd-title').textContent = step.title;
+  const methodEl = document.getElementById('sd-method');
+  methodEl.textContent = step.method;
+  methodEl.className = 'step-method' + (step.method === 'GET' ? ' get' : '');
+  document.getElementById('sd-narrative').innerHTML = step.narrative;
+
+  document.getElementById('sd-grid').innerHTML = `
+    <div class="req-card">
+      <div class="req-card-label">Request → ${step.requestUrl.startsWith('(') ? '' : 'URL'}</div>
+      <pre>${step.requestUrl.startsWith('(') ? step.requestUrl : '<span class="url">' + step.requestUrl + '</span>'}\n\n${step.requestBody.replace(/<span class="comment">/g, '<span style="color:var(--muted)">')}</pre>
+    </div>
+    <div class="req-card">
+      <div class="req-card-label">Response · ${step.responseStatus}</div>
+      <pre>${step.responseBody}</pre>
+    </div>
+  `;
+
+  // Note box
+  const noteEl = document.getElementById('sd-note');
+  if (step.note) {
+    noteEl.innerHTML = `<div class="note-box ${step.note.type === 'teal' ? 'teal-note' : ''}">${step.note.text}</div>`;
+  } else {
+    noteEl.innerHTML = '';
+  }
+
+  // Append console lines
+  const consoleEl = document.getElementById('console');
+  step.consoleLines.forEach((line, i) => {
+    setTimeout(() => {
+      const div = document.createElement('div');
+      div.className = 'console-line';
+      const arrow = line.dir === 'out' ? '<span class="console-arrow out">→</span>' :
+                    line.dir === 'in' ? '<span class="console-arrow in">←</span>' :
+                    '<span style="color:var(--muted)">·</span>';
+      div.innerHTML = `<span class="console-time">[${line.time}]</span> ${arrow} ${line.text}`;
+      consoleEl.appendChild(div);
+      requestAnimationFrame(() => div.classList.add('show'));
+      consoleEl.scrollTop = consoleEl.scrollHeight;
+    }, i * 220);
+  });
+
+  // Update next button
+  if (idx === STEPS.length) {
+    document.getElementById('btn-next').textContent = '✓ Complete';
+    document.getElementById('btn-next').disabled = true;
+  } else {
+    document.getElementById('btn-next').textContent = '▶ Next Step';
+    document.getElementById('btn-next').disabled = false;
+  }
+}
+
+document.getElementById('btn-next').addEventListener('click', () => {
+  if (currentStep < STEPS.length) {
+    currentStep++;
+    renderStep(currentStep);
+  }
+});
+document.getElementById('btn-reset').addEventListener('click', () => {
+  currentStep = 0;
+  renderStep(0);
+});
+
+// initialize
+renderStep(0);
+
+// ═══════════════════════════════════════════════════════════════
+// DEMO 2 — REQUEST BUILDER
+// ═══════════════════════════════════════════════════════════════
+document.getElementById('b-send').addEventListener('click', () => {
+  const auth = document.getElementById('b-auth').value;
+  const partner = document.getElementById('b-partner').value;
+  const body = document.getElementById('b-body').value;
+
+  let status, msg, explain, responseBody;
+
+  // Order matters: auth is checked before anything else, then partner access,
+  // then body validation. This mirrors the real layered check sequence.
+  if (auth === 'none') {
+    status = 401; msg = 'Unauthorized';
+    explain = 'EN has no token to evaluate, so identity cannot be confirmed. <strong>This is always the first check.</strong> Without an Authorization header, nothing else gets evaluated.';
+    responseBody = `{
+  <span class="key">"error"</span>: <span class="err">"unauthorized"</span>,
+  <span class="key">"error_description"</span>: <span class="err">"Missing Authorization header"</span>
+}`;
+  } else if (auth === 'expired') {
+    status = 401; msg = 'Unauthorized — token expired';
+    explain = 'The token signature is valid but the <code>exp</code> claim has passed. APIs are stateless — every call is independently checked. <strong>UKG needs to re-authenticate</strong> at <code>/identity/connect/token</code> to get a fresh token.';
+    responseBody = `{
+  <span class="key">"error"</span>: <span class="err">"invalid_token"</span>,
+  <span class="key">"error_description"</span>: <span class="err">"The access token expired"</span>
+}`;
+  } else if (partner === 'disabled') {
+    status = 403; msg = 'Forbidden — partner API not enabled';
+    explain = 'The token is valid, but UKG has not enabled the API for this client on their side yet. EN can\'t access their system. <strong>Resolution path</strong> (matching what the Integration Health Dashboard shows): Please contact UKG to ensure your API is enabled. Then, use the Actions icon → "Pull from Payroll" to retry.';
+    responseBody = `{
+  <span class="key">"error"</span>: <span class="err">"forbidden"</span>,
+  <span class="key">"error_description"</span>: <span class="err">"Partner has not enabled this integration for the requested client"</span>
+}`;
+  } else if (body === 'empty') {
+    status = 400; msg = 'Bad Request — empty body';
+    explain = 'EN requires <code>companyIdentifier</code> and <code>employeeIdentifier</code> in the body. Without them, EN has no idea who changed and can\'t look anyone up.';
+    responseBody = `{
+  <span class="key">"error"</span>: <span class="err">"validation_failed"</span>,
+  <span class="key">"missing"</span>: [<span class="err">"companyIdentifier"</span>, <span class="err">"employeeIdentifier"</span>]
+}`;
+  } else if (body === 'missing-emp') {
+    status = 400; msg = 'Bad Request — missing field';
+    explain = 'companyIdentifier was present but employeeIdentifier was not. Both are required — EN cannot resolve <em>who</em> changed without the employee ID.';
+    responseBody = `{
+  <span class="key">"error"</span>: <span class="err">"validation_failed"</span>,
+  <span class="key">"missing"</span>: [<span class="err">"employeeIdentifier"</span>]
+}`;
+  } else {
+    status = 201; msg = 'Created';
+    explain = 'All checks passed: token valid, partner API enabled, body well-formed. EN created the notification record and will fire <code>Get Employee</code> back to UKG shortly. This is the <strong>In Sync</strong> result you\'d see on the Integration Health Dashboard.';
+    responseBody = `{
+  <span class="key">"status"</span>: <span class="str">"created"</span>,
+  <span class="key">"notificationId"</span>: <span class="str">"ntf_${Math.random().toString(16).slice(2,8)}"</span>,
+  <span class="key">"createdAt"</span>: <span class="str">"${new Date().toISOString()}"</span>
+}`;
+  }
+
+  // Render
+  const pill = document.getElementById('r-pill');
+  pill.textContent = status === 201 ? '201 Created' : status + ' ' + msg.split(' — ')[0];
+  pill.className = 'status-pill s' + (status === 201 ? '200' : status);
+  document.getElementById('r-msg').textContent = msg;
+  document.getElementById('r-explain').innerHTML = explain;
+  document.getElementById('r-body').innerHTML = responseBody;
+});
+
+// ═══════════════════════════════════════════════════════════════
+// DEMO 3 — ERROR DECODER (real EN transmission log rules)
+// ═══════════════════════════════════════════════════════════════
+const ERRORS = {
+  'ok-201': {
+    code: 201, name: 'Successful deduction created', codeClass: 'c201',
+    endpoint: 'Payroll Deduction', classification: 'In Sync', classClass: 'in-sync',
+    meaning: 'EN posted a new deduction to the payroll partner and they accepted it cleanly. The 201 status confirms the deduction record was <strong>created</strong> on the partner side. This is what In Sync looks like for a successful create.',
+    triggers: 'A new enrollment is submitted in EN (initial enrollment, QLE, or Open Enrollment closeout). EN queues the deduction in <code>partner_deduction_notification</code>, the push job fires the POST to the partner, and the partner returns 201.',
+    ask: 'Nothing — but verify on the next paycheck that the <em>amount</em> is correct. A 201 confirms the structure was accepted, not that the per-pay value matches what EN sent. If the value is wrong, that\'s an EN-side mapping issue, not a partner failure.',
+    fix: 'No fix needed. The Integration Health Dashboard will show this employee as In Sync.'
+  },
+
+  'ukg-bad-code': {
+    code: 400, name: 'Bad code — UKG', codeClass: 'c400',
+    endpoint: 'Payroll Employee Deductions', classification: 'Needs Action', classClass: 'needs-action',
+    meaning: 'EN sent a deduction to UKG Ready, but the payroll code mapped in EN has not been marked as <code>IsEmployeeNavigator</code> in UKG\'s system. UKG only accepts changes from EN for codes flagged as EN-managed.',
+    triggers: 'New deduction code added to a UKG Ready client without the EN flag enabled in UKG. Or a code that was working got the flag toggled off in UKG. Common during plan setup or code re-mapping.',
+    ask: 'Confirm with the broker / HR admin: in UKG Ready, has this payroll code been marked as <code>IsEmployeeNavigator</code>? If not, that\'s the fix. The error message in the dashboard explicitly references this.',
+    fix: 'EN dashboard instruction: "Follow the guidance from our UKG Ready – How to convert your payroll codes to Is Employee Navigator video. Once you\'ve completed that in UKG Ready, you can return here →" use the Actions icon → "Push to Payroll" to retry. EN will not auto-retry — the broker must fix UKG first.'
+  },
+
+  'bad-address': {
+    code: 400, name: 'Bad address — Paylocity', codeClass: 'c400',
+    endpoint: 'Update Employee', classification: 'Needs Action', classClass: 'needs-action',
+    meaning: 'EN tried to push a demographic update to Paylocity, but Paylocity rejected the address as invalid — specifically, <em>"Address1 must be greater than or equal to 0 and less than or equal to 40 characters long."</em> The address in EN is too long for Paylocity\'s field.',
+    triggers: 'An HR admin or broker entered a long address line in EN (e.g., a multi-unit building with a long street name). EN validates only that the field is non-empty; the partner\'s constraint is stricter.',
+    ask: 'Look at the address in the employee\'s EN profile. Is Address Line 1 longer than 40 characters? If so, that\'s the issue.',
+    fix: 'EN dashboard instruction: "Please fix it within their Profile in EN, and this employee will automatically move to In Sync." The retry happens automatically once the data is corrected — no manual push needed.'
+  },
+
+  'forbidden': {
+    code: 403, name: 'API not enabled by partner', codeClass: 'c403',
+    endpoint: 'Payroll Deduction', classification: 'Needs Action', classClass: 'needs-action',
+    meaning: 'The partner is denying EN access to their system. <strong>This almost always means the partner has not enabled the API for this client on their side yet.</strong> EN authenticated successfully (so it\'s not a token issue) but cannot access the company\'s data.',
+    triggers: 'Most common during initial setup before the partner has flipped the integration switch. Also happens if a client is moved between accounts on the partner side, or if the partner revokes API access for security reasons.',
+    ask: 'Has the broker or HR admin contacted the partner to confirm the API integration is enabled for this specific client? This is a partner-side configuration, not something EN can fix.',
+    fix: 'EN dashboard instruction: "Your payroll partner is denying us access to their system. Please contact [Partner Support] to ensure your API is enabled. Then, use the Actions icon → Push to Payroll to retry this." 401 responses from many of our partners hit this same dashboard rule — the underlying cause is the same.'
+  },
+
+  'not-found': {
+    code: 404, name: 'Resource not found', codeClass: 'c404',
+    endpoint: 'Get Employee', classification: 'Needs Action', classClass: 'needs-action',
+    meaning: 'EN tried to fetch the employee\'s record from the partner, but the partner says no employee exists at that identifier. This means the Payroll ID in EN does not match any record in the partner\'s system.',
+    triggers: 'Most common cause: the employee was created in EN before being added to payroll, or the wrong Payroll ID was assigned. Also happens when an employee was deleted (rather than terminated) on the partner side.',
+    ask: 'Does this employee exist in the partner system? What is their actual Payroll ID there? Compare to the Payroll ID stored on the EN employee record.',
+    fix: 'EN dashboard instruction: "The employee record or resource did not appear to exist within your Payroll partner\'s system when we tried to retrieve their data. If you believe they should, then use the Actions icon → Pull from Payroll to retry this." Often the real fix is correcting the Payroll ID in EN to match the partner record.'
+  },
+
+  'auth-failed': {
+    code: 500, name: 'Authentication with partner failed', codeClass: 'c500',
+    endpoint: 'Get Employee', classification: "We're On It", classClass: 'were-on-it',
+    meaning: 'EN tried to authenticate with the partner\'s token endpoint and got a 500 back. This is the partner having a transient issue on their auth server — not a credential problem on EN\'s side. <strong>EN classifies this as We\'re On It, meaning we\'ll auto-retry tonight.</strong>',
+    triggers: 'Partner\'s identity service had a brief outage. Partner deployed a change that affected token issuance. Or a transient network issue between EN and the partner.',
+    ask: 'No action needed unless it\'s persistent. Check the partner\'s status page if one exists. If the same error appears the next morning, then escalate.',
+    fix: 'EN dashboard instruction: "[Partner]\'s API was unavailable. We\'ll retry this automatically tonight. Feel free to use the Actions icon → Pull from Payroll if you\'d prefer not to wait." No analyst action required for transient cases.'
+  },
+
+  'partner-down': {
+    code: 503, name: 'Partner API unavailable', codeClass: 'c503',
+    endpoint: 'Update Employee', classification: "We're On It", classClass: 'were-on-it',
+    meaning: 'The partner\'s API responded with 503 Service Unavailable — the partner system itself is down or in maintenance. Like 500 above, this is treated as transient and queued for an automatic overnight retry.',
+    triggers: 'Partner is in a maintenance window. Partner deployed a breaking change. Partner is rate-limiting or throttling at the infrastructure level.',
+    ask: 'Is the partner aware? Check their status page. If multiple clients are affected at the same time, raise it internally — we may want to pause pushes to that partner.',
+    fix: 'EN dashboard instruction: "[Partner]\'s API was unavailable. We\'ll retry this automatically tonight. Feel free to use the Actions icon → Push to Payroll if you\'d prefer not to wait." Auto-retry handles most cases.'
+  }
+};
+
+document.querySelectorAll('.err-card').forEach(card => {
+  card.addEventListener('click', () => {
+    document.querySelectorAll('.err-card').forEach(c => c.classList.remove('selected'));
+    card.classList.add('selected');
+    const data = ERRORS[card.dataset.err];
+    const detail = document.getElementById('err-detail');
+    detail.classList.remove('empty');
+    detail.innerHTML = `
+      <div class="err-detail-head">
+        <span class="big-code ${data.codeClass}">${data.code}</span>
+        <span class="big-name">${data.name}</span>
+        <span class="class-badge ${data.classClass}"><span class="class-dot"></span>${data.classification}</span>
+      </div>
+      <div class="err-detail-meta">Endpoint: ${data.endpoint}</div>
+      <div class="err-section">
+        <div class="err-section-label">What it means</div>
+        <div class="err-section-body">${data.meaning}</div>
+      </div>
+      <div class="err-section">
+        <div class="err-section-label">Common triggers</div>
+        <div class="err-section-body">${data.triggers}</div>
+      </div>
+      <div class="err-section">
+        <div class="err-section-label">What to check / ask</div>
+        <div class="err-section-body">${data.ask}</div>
+      </div>
+      <div class="err-section">
+        <div class="err-section-label">How to fix (per EN's dashboard)</div>
+        <div class="err-section-body">${data.fix}</div>
+      </div>
+    `;
+  });
+});
+</script>
+</body>
+</html>
