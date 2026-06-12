@@ -7,7 +7,9 @@
 <title>Payroll Integration Knowledge Test · Expert Level</title>
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <script>
-  (function(){emailjs.init({publicKey:"HqXlyz4h2QzKWeEXc"});})();
+  window.addEventListener('load', function(){
+    try { emailjs.init({publicKey:"HqXlyz4h2QzKWeEXc"}); } catch(e){ console.warn('EmailJS init failed',e); }
+  });
 </script>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 <style>
@@ -457,17 +459,6 @@ function startTest(){
 }
 document.getElementById('nameInput').addEventListener('keydown',e=>{if(e.key==='Enter')startTest();});
 
-function startTest(){
-  const v=document.getElementById('nameInput').value.trim();
-  if(!v){document.getElementById('nameInput').classList.add('err');document.getElementById('nameErr').classList.add('show');return;}
-  takerName=v;startTime=new Date();
-  document.getElementById('nameGate').classList.add('hidden');
-  const tb=document.getElementById('takerBanner');tb.style.display='flex';
-  document.getElementById('takerDisplay').textContent=takerName;
-  document.getElementById('takerTime').textContent='Started: '+startTime.toLocaleString();
-}
-document.getElementById('nameInput').addEventListener('keydown',e=>{if(e.key==='Enter')startTest();});
-
 function buildProg(){
   const w=document.getElementById('progSegments');w.innerHTML='';
   SEGMENTS.forEach((_,i)=>{const d=document.createElement('div');d.className='prog-seg';d.id='ps-'+i;w.appendChild(d);});
@@ -845,34 +836,26 @@ To add up the final score:
 ${autoTotal} (auto) + [sum of OE scores] = FINAL / 100
 `;
 
-  emailjs.send('service_i4gwaac','template_5sf7wqp',{
-    taker_name: takerName,
-    message: fullMessage
-  }).then(()=>{
-    status.className='submit-status sent';
-    status.textContent='✅ Sent! Your manager has received your results for grading.';
-    btn.textContent='✅ Submitted';
-  }).catch((err)=>{
+  try {
+    emailjs.send('service_i4gwaac','template_5sf7wqp',{
+      taker_name: takerName,
+      message: fullMessage
+    }).then(()=>{
+      status.className='submit-status sent';
+      status.textContent='✅ Sent! Your manager has received your results for grading.';
+      btn.textContent='✅ Submitted';
+    }).catch((err)=>{
+      status.className='submit-status error';
+      status.textContent='❌ Something went wrong — please print to PDF and send manually. Error: '+JSON.stringify(err);
+      btn.disabled=false;
+      btn.textContent='📤 Try Again';
+    });
+  } catch(e){
     status.className='submit-status error';
-    status.textContent='❌ Something went wrong — please take a screenshot or print to PDF instead. Error: '+JSON.stringify(err);
+    status.textContent='❌ Email service unavailable — please print to PDF and send manually.';
     btn.disabled=false;
     btn.textContent='📤 Try Again';
-  });
-}
-
-  emailjs.send('service_i4gwaac','template_5sf7wqp',{
-    taker_name: takerName,
-    message: fullMessage
-  }).then(()=>{
-    status.className='submit-status sent';
-    status.textContent='✅ Sent! Your manager has received your results for grading.';
-    btn.textContent='✅ Submitted';
-  }).catch((err)=>{
-    status.className='submit-status error';
-    status.textContent='❌ Something went wrong — please take a screenshot or print to PDF instead. Error: '+JSON.stringify(err);
-    btn.disabled=false;
-    btn.textContent='📤 Try Again';
-  });
+  }
 }
 
 function scrollFinal(){document.getElementById('finalResults').scrollIntoView({behavior:'smooth',block:'start'});}
