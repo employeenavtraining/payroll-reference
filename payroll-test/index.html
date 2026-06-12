@@ -753,7 +753,6 @@ function sendForGrading(){
   status.className='submit-status sending';
   status.textContent='⏳ Sending your results…';
 
-  // Build the auto-graded summary
   const autoTotal=segScores.reduce((a,b)=>a+b,0);
   let totalOE=0;
   SEGMENTS.forEach(seg=>{totalOE+=seg.qs.filter(q=>q.t==='oe').length;});
@@ -769,12 +768,52 @@ function sendForGrading(){
     sectionSummary+=`  Section ${i+1}: ${seg.title} — ${s}/${aMax} auto + ${oeC} OE pending\n`;
   });
 
+  // Build wrong auto-graded answers block
+  const wrongAnswers=[];
+  SEGMENTS.forEach(seg=>{
+    seg.qs.forEach(q=>{
+      if(q.t==='oe')return; // skip OE
+      const card=document.getElementById('card-'+q.n);
+      if(!card)return;
+      // Determine what the taker answered
+      let ua=null;
+      if(q.t==='mc'){const s=card.querySelector('.option.sel, .option.sw');if(s)ua=s.dataset.val;}
+      if(q.t==='tf'){const s=card.querySelector('.tf-btn.sel, .tf-btn.sw');if(s)ua=s.dataset.val;}
+      if(q.t==='fi'){const inp=card.querySelector('.fill-input');if(inp)ua=inp.value.trim();}
+      // Check if wrong
+      const isWrong=card.classList.contains('gw')||card.querySelector('.option.sw')||card.querySelector('.tf-btn.sw')||card.querySelector('.fill-input.sw');
+      if(isWrong){
+        let correctText=q.a;
+        let takerText=ua||'(not answered)';
+        if(q.t==='mc'){
+          const ci=q.a.charCodeAt(0)-65;
+          correctText=q.a+'. '+(q.o[ci]||'');
+          if(ua){const ti=ua.charCodeAt(0)-65;takerText=ua+'. '+(q.o[ti]||'');}
+        }
+        wrongAnswers.push({n:q.n,section:seg.title,qtext:q.q,taker:takerText,correct:correctText,type:q.t==='tf'?'True/False':'Multiple Choice'});
+      }
+    });
+  });
+
+  let wrongBlock='';
+  if(wrongAnswers.length===0){
+    wrongBlock='  No auto-graded questions missed — perfect score on MC and T/F!\n';
+  } else {
+    wrongAnswers.forEach(w=>{
+      wrongBlock+=`\n─────────────────────────────────────────\n`;
+      wrongBlock+=`Q${w.n} [${w.type}] — ${w.section}\n`;
+      wrongBlock+=`QUESTION: ${w.qtext}\n`;
+      wrongBlock+=`TAKER ANSWERED: ${w.taker}\n`;
+      wrongBlock+=`CORRECT ANSWER: ${w.correct}\n`;
+    });
+  }
+
   // Build OE responses block
   const oeQNums=Object.keys(oeLog).map(Number).sort((a,b)=>a-b);
   let oeBlock='';
-  oeQNums.forEach((qn,idx)=>{
+  oeQNums.forEach(qn=>{
     const entry=oeLog[qn];
-    const hasResponse=entry.response && entry.response.length>2;
+    const hasResponse=entry.response&&entry.response.length>2;
     oeBlock+=`\n─────────────────────────────────────────\n`;
     oeBlock+=`Q${qn}: ${entry.qtext}\n\n`;
     oeBlock+=`RESPONSE:\n${hasResponse?entry.response:'(no response written)'}\n`;
@@ -796,12 +835,30 @@ TOTAL SO FAR: ${autoTotal} / 100 (+ up to ${totalOE} from OE)
 SECTION BREAKDOWN:
 ${sectionSummary}
 ═══════════════════════════════════════════════════════
+AUTO-GRADED INCORRECT ANSWERS (${wrongAnswers.length} missed)
+${wrongBlock}
+═══════════════════════════════════════════════════════
 OPEN-ENDED RESPONSES — PLEASE SCORE EACH 0 or 1
 ${oeBlock}
 ═══════════════════════════════════════════════════════
 To add up the final score:
 ${autoTotal} (auto) + [sum of OE scores] = FINAL / 100
 `;
+
+  emailjs.send('service_i4gwaac','template_5sf7wqp',{
+    taker_name: takerName,
+    message: fullMessage
+  }).then(()=>{
+    status.className='submit-status sent';
+    status.textContent='✅ Sent! Your manager has received your results for grading.';
+    btn.textContent='✅ Submitted';
+  }).catch((err)=>{
+    status.className='submit-status error';
+    status.textContent='❌ Something went wrong — please take a screenshot or print to PDF instead. Error: '+JSON.stringify(err);
+    btn.disabled=false;
+    btn.textContent='📤 Try Again';
+  });
+}
 
   emailjs.send('service_i4gwaac','template_5sf7wqp',{
     taker_name: takerName,
